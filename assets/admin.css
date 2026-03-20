@@ -1,0 +1,160 @@
+/**
+ * Opay Admin — Stylesheet
+ */
+
+/* -------------------------------------------------------------------------
+ * Layout
+ * ---------------------------------------------------------------------- */
+
+.opay-admin-wrap {
+    max-width: 960px;
+}
+
+.opay-card {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin-top: 20px;
+}
+
+.opay-card h2 {
+    margin-top: 0;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 12px;
+}
+
+/* -------------------------------------------------------------------------
+ * Toolbar (Transactions page)
+ * ---------------------------------------------------------------------- */
+
+.opay-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin: 16px 0;
+    padding: 12px 16px;
+    background: #f6f7f7;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+}
+
+.opay-toolbar input,
+.opay-toolbar select {
+    height: 30px;
+    line-height: 28px;
+}
+
+/* -------------------------------------------------------------------------
+ * Tables
+ * ---------------------------------------------------------------------- */
+
+.opay-tx-table,
+#opay-buttons-table {
+    margin-top: 8px;
+}
+
+.opay-loading {
+    color: #72777c;
+    font-style: italic;
+    padding: 20px !important;
+    text-align: center;
+}
+
+.opay-mini-table {
+    margin-top: 12px;
+    font-size: 13px;
+}
+
+/* -------------------------------------------------------------------------
+ * Status badges
+ * ---------------------------------------------------------------------- */
+
+.opay-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.opay-status-success {
+    background: #edfaef;
+    color: #1e7e34;
+}
+
+.opay-status-failed {
+    background: #fdecea;
+    color: #c62828;
+}
+
+.opay-status-pending {
+    background: #fff8e1;
+    color: #856404;
+}
+
+/* -------------------------------------------------------------------------
+ * Notices
+ * ---------------------------------------------------------------------- */
+
+.opay-notice {
+    padding: 10px 14px;
+    border-radius: 4px;
+    margin: 12px 0;
+}
+
+/* -------------------------------------------------------------------------
+ * Pagination
+ * ---------------------------------------------------------------------- */
+
+.opay-pagination {
+    margin-top: 12px;
+}
+
+.opay-pag-btns {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.opay-pag-info {
+    color: #50575e;
+    font-size: 13px;
+}
+
+/* -------------------------------------------------------------------------
+ * Connected badge
+ * ---------------------------------------------------------------------- */
+
+.opay-connected-badge {
+    color: #1e7e34;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* -------------------------------------------------------------------------
+ * Shortcode display
+ * ---------------------------------------------------------------------- */
+
+.opay-shortcode {
+    background: #f0f0f1;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    margin-right: 6px;
+    word-break: break-all;
+}
+
+/* -------------------------------------------------------------------------
+ * Webhook URL display
+ * ---------------------------------------------------------------------- */
+
+.opay-webhook-url code {
+    background: #f6f7f7;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 13px;
+}
