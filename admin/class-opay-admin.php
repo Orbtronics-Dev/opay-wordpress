@@ -13,14 +13,8 @@ class Opay_Admin {
 
         // AJAX handlers
         $ajax_actions = [
-            'opay_login',
-            'opay_logout',
             'opay_save_keys',
             'opay_save_settings',
-            'opay_create_button',
-            'opay_delete_button',
-            'opay_load_transactions',
-            'opay_load_buttons',
             'opay_refresh_api_keys',
         ];
 
@@ -34,13 +28,18 @@ class Opay_Admin {
     // -------------------------------------------------------------------------
 
     public function register_menu(): void {
+        $icon_path = OPAY_PLUGIN_DIR . 'assets/icon.svg';
+        $menu_icon = file_exists( $icon_path )
+            ? 'data:image/svg+xml;base64,' . base64_encode( file_get_contents( $icon_path ) ) // phpcs:ignore WordPress.WP.AlternativeFunctions
+            : 'dashicons-money-alt';
+
         add_menu_page(
             __( 'Opay Payments', 'opay-payment-gateway' ),
             __( 'Opay Payments', 'opay-payment-gateway' ),
             'manage_options',
             'opay-settings',
             [ $this, 'render_settings_page' ],
-            'dashicons-money-alt',
+            $menu_icon,
             56
         );
 
@@ -53,23 +52,6 @@ class Opay_Admin {
             [ $this, 'render_settings_page' ]
         );
 
-        add_submenu_page(
-            'opay-settings',
-            __( 'Transactions', 'opay-payment-gateway' ),
-            __( 'Transactions', 'opay-payment-gateway' ),
-            'manage_options',
-            'opay-transactions',
-            [ $this, 'render_transactions_page' ]
-        );
-
-        add_submenu_page(
-            'opay-settings',
-            __( 'Payment Buttons', 'opay-payment-gateway' ),
-            __( 'Payment Buttons', 'opay-payment-gateway' ),
-            'manage_options',
-            'opay-payment-buttons',
-            [ $this, 'render_buttons_page' ]
-        );
     }
 
     // -------------------------------------------------------------------------
@@ -79,8 +61,6 @@ class Opay_Admin {
     public function enqueue_assets( string $hook ): void {
         $opay_pages = [
             'toplevel_page_opay-settings',
-            'opay-payments_page_opay-transactions',
-            'opay-payments_page_opay-payment-buttons',
         ];
 
         if ( ! in_array( $hook, $opay_pages, true ) ) {
@@ -121,14 +101,6 @@ class Opay_Admin {
         require OPAY_PLUGIN_DIR . 'admin/views/page-settings.php';
     }
 
-    public function render_transactions_page(): void {
-        require OPAY_PLUGIN_DIR . 'admin/views/page-transactions.php';
-    }
-
-    public function render_buttons_page(): void {
-        require OPAY_PLUGIN_DIR . 'admin/views/page-payment-buttons.php';
-    }
-
     // -------------------------------------------------------------------------
     // AJAX dispatcher
     // -------------------------------------------------------------------------
@@ -145,29 +117,11 @@ class Opay_Admin {
         }
 
         switch ( $action ) {
-            case 'opay_login':
-                $this->ajax_login();
-                break;
-            case 'opay_logout':
-                $this->ajax_logout();
-                break;
             case 'opay_save_keys':
                 $this->ajax_save_keys();
                 break;
             case 'opay_save_settings':
                 $this->ajax_save_settings();
-                break;
-            case 'opay_create_button':
-                $this->ajax_create_button();
-                break;
-            case 'opay_delete_button':
-                $this->ajax_delete_button();
-                break;
-            case 'opay_load_transactions':
-                $this->ajax_load_transactions();
-                break;
-            case 'opay_load_buttons':
-                $this->ajax_load_buttons();
                 break;
             case 'opay_refresh_api_keys':
                 $this->ajax_refresh_api_keys();
@@ -180,42 +134,6 @@ class Opay_Admin {
     // -------------------------------------------------------------------------
     // AJAX handlers
     // -------------------------------------------------------------------------
-
-    private function ajax_login(): void {
-        $email    = sanitize_email( $_POST['email'] ?? '' );
-        $password = $_POST['password'] ?? '';
-
-        if ( ! $email || ! $password ) {
-            wp_send_json_error( [ 'message' => 'Email and password are required.' ] );
-        }
-
-        $result = Opay_API::login( $email, $password );
-
-        if ( $result['error'] ) {
-            wp_send_json_error( [ 'message' => $result['error'] ] );
-        }
-
-        $token = $result['data']['token'] ?? '';
-        if ( ! $token ) {
-            wp_send_json_error( [ 'message' => 'No token in response.' ] );
-        }
-
-        Opay_Auth::set_sanctum_token( $token );
-
-        // Auto-fetch API keys after login
-        $keys_result = Opay_API::get_api_keys();
-
-        wp_send_json_success( [
-            'user'    => $result['data']['user'] ?? [],
-            'client'  => $result['data']['client'] ?? [],
-            'api_keys' => $keys_result['data'] ?? [],
-        ] );
-    }
-
-    private function ajax_logout(): void {
-        Opay_Auth::clear_sanctum_token();
-        wp_send_json_success( [ 'message' => 'Logged out.' ] );
-    }
 
     private function ajax_save_keys(): void {
         $env    = sanitize_key( $_POST['environment'] ?? Opay_Auth::get_environment() );
@@ -242,73 +160,6 @@ class Opay_Admin {
         Opay_Auth::set_environment( $environment );
 
         wp_send_json_success( [ 'message' => 'Settings saved.' ] );
-    }
-
-    private function ajax_create_button(): void {
-        $data = [
-            'name'        => sanitize_text_field( $_POST['name'] ?? '' ),
-            'amount'      => (int) ( $_POST['amount'] ?? 0 ),
-            'currency'    => sanitize_text_field( $_POST['currency'] ?? 'USD' ),
-            'description' => sanitize_textarea_field( $_POST['description'] ?? '' ),
-            'mode'        => sanitize_key( $_POST['mode'] ?? Opay_Auth::get_environment() ),
-        ];
-
-        if ( ! $data['name'] || ! $data['amount'] ) {
-            wp_send_json_error( [ 'message' => 'Name and amount are required.' ] );
-        }
-
-        $result = Opay_API::create_payment_button( $data );
-
-        if ( $result['error'] ) {
-            wp_send_json_error( [ 'message' => $result['error'] ] );
-        }
-
-        wp_send_json_success( $result['data'] );
-    }
-
-    private function ajax_delete_button(): void {
-        $id = sanitize_text_field( $_POST['id'] ?? '' );
-
-        if ( ! $id ) {
-            wp_send_json_error( [ 'message' => 'Button ID is required.' ] );
-        }
-
-        $result = Opay_API::delete_payment_button( $id );
-
-        if ( $result['error'] ) {
-            wp_send_json_error( [ 'message' => $result['error'] ] );
-        }
-
-        wp_send_json_success( [ 'message' => 'Button deleted.' ] );
-    }
-
-    private function ajax_load_transactions(): void {
-        $filters = [
-            'page'    => max( 1, (int) ( $_POST['page'] ?? 1 ) ),
-            'search'  => sanitize_text_field( $_POST['search'] ?? '' ),
-            'status'  => sanitize_text_field( $_POST['status'] ?? '' ),
-            'from'    => sanitize_text_field( $_POST['from'] ?? '' ),
-            'to'      => sanitize_text_field( $_POST['to'] ?? '' ),
-        ];
-
-        $result = Opay_API::list_transactions( array_filter( $filters ) );
-
-        if ( $result['error'] ) {
-            wp_send_json_error( [ 'message' => $result['error'] ] );
-        }
-
-        wp_send_json_success( $result['data'] );
-    }
-
-    private function ajax_load_buttons(): void {
-        $mode   = sanitize_key( $_POST['mode'] ?? Opay_Auth::get_environment() );
-        $result = Opay_API::list_payment_buttons( $mode );
-
-        if ( $result['error'] ) {
-            wp_send_json_error( [ 'message' => $result['error'] ] );
-        }
-
-        wp_send_json_success( $result['data'] );
     }
 
     private function ajax_refresh_api_keys(): void {

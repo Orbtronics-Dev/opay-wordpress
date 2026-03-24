@@ -1,0 +1,33 @@
+services:
+  wordpress:
+    image: wordpress
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      WORDPRESS_DB_HOST: database
+      WORDPRESS_DB_USER: ${DATABASE_USER:-orbtronics}
+      WORDPRESS_DB_PASSWORD: ${DATABASE_PASSWORD:-orbtronics}
+      WORDPRESS_DB_NAME: ${DATABASE_NAME:-orbtronics_db}
+    volumes:
+      - wordpress:/var/www/html
+      # Bind-mount the plugin source directly into the container so every
+      # file change on the host is instantly live — no re-upload needed.
+      # Adjust the right-hand path if WordPress installed the plugin under
+      # a different folder name (check wp-content/plugins/ inside the container).
+      - .:/var/www/html/wp-content/plugins/opay-payment-gateway
+
+  database:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${DATABASE_NAME:-orbtronics_db}
+      MYSQL_USER: ${DATABASE_USER:-orbtronics}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD:-orbtronics}
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - database:/var/lib/mysql
+
+volumes:
+  wordpress:
+  database:

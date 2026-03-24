@@ -12,6 +12,7 @@ class Opay_WC_Gateway extends WC_Payment_Gateway {
 
     public function __construct() {
         $this->id                 = 'opay';
+        $this->icon               = apply_filters( 'opay_gateway_icon', OPAY_PLUGIN_URL . 'assets/orbtronics.svg' );
         $this->method_title       = __( 'Opay', 'opay-payment-gateway' );
         $this->method_description = __( 'Accept payments via Opay. Customers are redirected to a secure hosted checkout page.', 'opay-payment-gateway' );
         $this->has_fields         = false;
@@ -27,6 +28,61 @@ class Opay_WC_Gateway extends WC_Payment_Gateway {
             'woocommerce_update_options_payment_gateways_' . $this->id,
             [ $this, 'process_admin_options' ]
         );
+    }
+
+    // -------------------------------------------------------------------------
+    // Admin options page — logo + status banner + standard settings table
+    // -------------------------------------------------------------------------
+
+    public function admin_options(): void {
+        $has_keys    = Opay_Auth::has_api_keys();
+        $backend_url = Opay_Auth::get_backend_url();
+        $settings_url = admin_url( 'admin.php?page=opay-settings' );
+        ?>
+        <div style="display:flex;align-items:center;gap:16px;margin:12px 0 16px;">
+            <img src="<?php echo esc_url( OPAY_PLUGIN_URL . 'assets/orbtronics.svg' ); ?>"
+                 alt="Opay"
+                 style="height:44px;width:auto;display:block;" />
+        </div>
+
+        <div class="notice notice-info inline" style="margin:0 0 16px;">
+            <p>
+                <?php
+                printf(
+                    /* translators: %s: link to Opay settings page */
+                    esc_html__( 'API credentials are managed on the %s — configure your backend URL and API keys there first, then enable this gateway below.', 'opay-payment-gateway' ),
+                    '<a href="' . esc_url( $settings_url ) . '"><strong>' . esc_html__( 'Opay Payments settings page', 'opay-payment-gateway' ) . '</strong></a>'
+                );
+                ?>
+            </p>
+        </div>
+
+        <?php if ( ! $backend_url ) : ?>
+        <div class="notice notice-error inline" style="margin:0 0 16px;">
+            <p><?php esc_html_e( 'Backend URL is not set. Go to Opay Payments → Settings → General to add it.', 'opay-payment-gateway' ); ?></p>
+        </div>
+        <?php elseif ( ! $has_keys ) : ?>
+        <div class="notice notice-warning inline" style="margin:0 0 16px;">
+            <p><?php esc_html_e( 'No API keys configured. Payments cannot be processed until credentials are set.', 'opay-payment-gateway' ); ?></p>
+        </div>
+        <?php else : ?>
+        <div class="notice notice-success inline" style="margin:0 0 16px;">
+            <p>
+                <?php
+                printf(
+                    /* translators: %s: environment label (Test / Live) */
+                    esc_html__( 'Connected — %s mode.', 'opay-payment-gateway' ),
+                    '<strong>' . esc_html( ucfirst( Opay_Auth::get_environment() ) ) . '</strong>'
+                );
+                ?>
+            </p>
+        </div>
+        <?php endif; ?>
+
+        <table class="form-table">
+            <?php $this->generate_settings_html(); ?>
+        </table>
+        <?php
     }
 
     // -------------------------------------------------------------------------

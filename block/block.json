@@ -27,5 +27,5 @@
     },
     "editorScript": "file:./edit.js",
     "viewScript": "file:./view.js",
-    "style": "file:../assets/public.js"
+    "style": "file:../assets/public.css"
 }

@@ -95,7 +95,7 @@ function opay_add_wc_gateway( array $gateways ): array {
 }
 
 /**
- * Declare HPOS compatibility with WooCommerce.
+ * Declare WooCommerce feature compatibility (HPOS + Checkout Blocks).
  */
 add_action( 'before_woocommerce_init', function (): void {
     if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
@@ -104,5 +104,25 @@ add_action( 'before_woocommerce_init', function (): void {
             __FILE__,
             true
         );
+        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
+            'cart_checkout_blocks',
+            __FILE__,
+            true
+        );
     }
+} );
+
+/**
+ * Register the Opay payment method with the WooCommerce Checkout Block.
+ *
+ * AbstractPaymentMethodType lives inside WooCommerce Blocks (bundled with WC 7+).
+ * We guard with class_exists so the site doesn't break if blocks are somehow absent.
+ */
+add_action( 'woocommerce_blocks_payment_method_type_registration', function ( $registry ): void {
+    if ( ! class_exists( '\Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
+        return;
+    }
+
+    require_once OPAY_PLUGIN_DIR . 'woocommerce/class-opay-blocks-payment-method.php';
+    $registry->register( new Opay_Blocks_Payment_Method() );
 } );

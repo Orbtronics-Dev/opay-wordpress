@@ -7,21 +7,21 @@ defined( 'ABSPATH' ) || exit;
 $active_tab  = sanitize_key( $_GET['tab'] ?? 'api-keys' );
 $environment = Opay_Auth::get_environment();
 $backend_url = Opay_Auth::get_backend_url();
-$is_authed   = Opay_Auth::is_authenticated();
 ?>
 <div class="wrap opay-admin-wrap">
-    <h1><?php esc_html_e( 'Opay Payments — Settings', 'opay-payment-gateway' ); ?></h1>
+    <div class="opay-admin-header">
+        <img src="<?php echo esc_url( OPAY_PLUGIN_URL . 'assets/orbtronics.svg' ); ?>"
+             alt="<?php esc_attr_e( 'Opay', 'opay-payment-gateway' ); ?>"
+             class="opay-admin-logo" />
+        <h1><?php esc_html_e( 'Settings', 'opay-payment-gateway' ); ?></h1>
+    </div>
 
     <nav class="nav-tab-wrapper">
         <a href="?page=opay-settings&tab=api-keys"
            class="nav-tab <?php echo $active_tab === 'api-keys' ? 'nav-tab-active' : ''; ?>">
             <?php esc_html_e( 'API Keys', 'opay-payment-gateway' ); ?>
         </a>
-        <a href="?page=opay-settings&tab=login"
-           class="nav-tab <?php echo $active_tab === 'login' ? 'nav-tab-active' : ''; ?>">
-            <?php esc_html_e( 'Login with Opay', 'opay-payment-gateway' ); ?>
-        </a>
-        <a href="?page=opay-settings&tab=general"
+<a href="?page=opay-settings&tab=general"
            class="nav-tab <?php echo $active_tab === 'general' ? 'nav-tab-active' : ''; ?>">
             <?php esc_html_e( 'General', 'opay-payment-gateway' ); ?>
         </a>
@@ -128,59 +128,5 @@ $is_authed   = Opay_Auth::is_authenticated();
         <?php endforeach; ?>
     </div>
 
-    <?php elseif ( $active_tab === 'login' ) : ?>
-    <!-- ------------------------------------------------------------------ -->
-    <!-- Login with Opay                                                       -->
-    <!-- ------------------------------------------------------------------ -->
-    <div class="opay-card">
-        <?php if ( $is_authed ) : ?>
-            <h2><?php esc_html_e( 'Connected to Opay', 'opay-payment-gateway' ); ?></h2>
-            <p class="opay-connected-badge">
-                &#10003; <?php esc_html_e( 'Your Opay account is connected.', 'opay-payment-gateway' ); ?>
-            </p>
-            <div id="opay-account-info">
-                <?php esc_html_e( 'Loading account info…', 'opay-payment-gateway' ); ?>
-            </div>
-            <p>
-                <button class="button button-secondary" id="opay-logout-btn">
-                    <?php esc_html_e( 'Disconnect Account', 'opay-payment-gateway' ); ?>
-                </button>
-                <button class="button" id="opay-refresh-keys-btn">
-                    <?php esc_html_e( 'Refresh API Keys', 'opay-payment-gateway' ); ?>
-                </button>
-            </p>
-        <?php else : ?>
-            <h2><?php esc_html_e( 'Login with Opay', 'opay-payment-gateway' ); ?></h2>
-            <p><?php esc_html_e( 'Log in with your Opay account credentials to automatically fetch your API keys.', 'opay-payment-gateway' ); ?></p>
-            <form id="opay-login-form">
-                <table class="form-table">
-                    <tr>
-                        <th scope="row">
-                            <label for="opay-login-email"><?php esc_html_e( 'Email', 'opay-payment-gateway' ); ?></label>
-                        </th>
-                        <td>
-                            <input type="email" id="opay-login-email" name="email"
-                                   class="regular-text" required />
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">
-                            <label for="opay-login-password"><?php esc_html_e( 'Password', 'opay-payment-gateway' ); ?></label>
-                        </th>
-                        <td>
-                            <input type="password" id="opay-login-password" name="password"
-                                   class="regular-text" required autocomplete="current-password" />
-                        </td>
-                    </tr>
-                </table>
-                <p>
-                    <button type="submit" class="button button-primary" id="opay-login-btn">
-                        <?php esc_html_e( 'Log In', 'opay-payment-gateway' ); ?>
-                    </button>
-                    <span class="spinner" id="opay-login-spinner"></span>
-                </p>
-            </form>
-        <?php endif; ?>
-    </div>
     <?php endif; ?>
 </div>

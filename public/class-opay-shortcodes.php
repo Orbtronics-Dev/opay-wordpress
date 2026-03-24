@@ -24,6 +24,13 @@ class Opay_Shortcodes {
 
         // Only load on pages/posts that actually contain the shortcode
         if ( $post && has_shortcode( $post->post_content, 'opay_button' ) ) {
+            wp_enqueue_style(
+                'opay-public',
+                OPAY_PLUGIN_URL . 'assets/public.css',
+                [],
+                OPAY_VERSION
+            );
+
             wp_enqueue_script(
                 'opay-public',
                 OPAY_PLUGIN_URL . 'assets/public.js',
