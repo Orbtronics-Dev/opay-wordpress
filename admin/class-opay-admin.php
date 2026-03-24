@@ -136,9 +136,12 @@ class Opay_Admin {
     // -------------------------------------------------------------------------
 
     private function ajax_save_keys(): void {
-        $env    = sanitize_key( $_POST['environment'] ?? Opay_Auth::get_environment() );
-        $pk     = sanitize_text_field( $_POST['pk'] ?? '' );
-        $sk     = sanitize_text_field( $_POST['sk'] ?? '' );
+        // Nonce already verified in handle_ajax() before this method is called.
+        // phpcs:disable WordPress.Security.NonceVerification.Missing
+        $env = sanitize_key( $_POST['environment'] ?? Opay_Auth::get_environment() );
+        $pk  = sanitize_text_field( wp_unslash( $_POST['pk'] ?? '' ) );
+        $sk  = sanitize_text_field( wp_unslash( $_POST['sk'] ?? '' ) );
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
 
         if ( $pk ) {
             Opay_Auth::set_pk( $pk, $env );
@@ -151,8 +154,11 @@ class Opay_Admin {
     }
 
     private function ajax_save_settings(): void {
-        $backend_url = esc_url_raw( $_POST['backend_url'] ?? '' );
+        // Nonce already verified in handle_ajax() before this method is called.
+        // phpcs:disable WordPress.Security.NonceVerification.Missing
+        $backend_url = esc_url_raw( wp_unslash( $_POST['backend_url'] ?? '' ) );
         $environment = sanitize_key( $_POST['environment'] ?? 'test' );
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
 
         if ( $backend_url ) {
             Opay_Auth::set_backend_url( $backend_url );

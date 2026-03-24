@@ -4,9 +4,9 @@
  */
 defined( 'ABSPATH' ) || exit;
 
-$active_tab  = sanitize_key( $_GET['tab'] ?? 'api-keys' );
-$environment = Opay_Auth::get_environment();
-$backend_url = Opay_Auth::get_backend_url();
+$active_tab  = sanitize_key( $_GET['tab'] ?? 'api-keys' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only tab navigation, no data mutation.
+$environment = Opay_Auth::get_environment(); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+$backend_url = Opay_Auth::get_backend_url(); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 ?>
 <div class="wrap opay-admin-wrap">
     <div class="opay-admin-header">
@@ -92,7 +92,7 @@ $backend_url = Opay_Auth::get_backend_url();
         <h2><?php esc_html_e( 'API Keys', 'opay-payment-gateway' ); ?></h2>
         <p><?php esc_html_e( 'Paste your Opay API keys below. Secret keys are stored encrypted.', 'opay-payment-gateway' ); ?></p>
 
-        <?php foreach ( [ 'test', 'live' ] as $env ) : ?>
+        <?php foreach ( [ 'test', 'live' ] as $env ) : // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound ?>
         <h3><?php echo esc_html( ucfirst( $env ) ) . ' ' . esc_html__( 'Keys', 'opay-payment-gateway' ); ?></h3>
         <form class="opay-keys-form" data-env="<?php echo esc_attr( $env ); ?>">
             <table class="form-table">
@@ -112,7 +112,7 @@ $backend_url = Opay_Auth::get_backend_url();
                     </th>
                     <td>
                         <input type="password" name="sk" class="regular-text opay-sk-field"
-                               value="<?php echo Opay_Auth::get_sk( $env ) ? str_repeat( '•', 24 ) : ''; ?>"
+                               value="<?php echo esc_attr( Opay_Auth::get_sk( $env ) ? str_repeat( '•', 24 ) : '' ); ?>"
                                placeholder="opay_<?php echo esc_attr( $env ); ?>_sk_..."
                                autocomplete="new-password" />
                         <p class="description">
@@ -122,7 +122,10 @@ $backend_url = Opay_Auth::get_backend_url();
                 </tr>
             </table>
             <button type="submit" class="button button-secondary">
-                <?php printf( esc_html__( 'Save %s Keys', 'opay-payment-gateway' ), esc_html( ucfirst( $env ) ) ); ?>
+                <?php
+                /* translators: %s: environment name, e.g. "Test" or "Live" */
+                printf( esc_html__( 'Save %s Keys', 'opay-payment-gateway' ), esc_html( ucfirst( $env ) ) );
+                ?>
             </button>
         </form>
         <?php endforeach; ?>

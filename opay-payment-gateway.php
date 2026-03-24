@@ -6,12 +6,14 @@
  * Version:     1.0.0
  * Author:      Opay
  * Author URI:  https://orbtronics.co/opay
- * License:     GPL-2.0+
+ * License:     GPL-2.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: opay-payment-gateway
+ * Domain Path: /languages
  * Requires at least: 6.0
  * Requires PHP: 8.0
  * WC requires at least: 7.0
- * WC tested up to: 8.0
+ * WC tested up to: 10.6
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -61,6 +63,8 @@ register_activation_hook( __FILE__, 'opay_activate' );
  * Boot the plugin after all plugins are loaded.
  */
 function opay_init(): void {
+    load_plugin_textdomain( 'opay-payment-gateway', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+
     // Admin
     if ( is_admin() ) {
         new Opay_Admin();

@@ -7,7 +7,7 @@
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
 // Remove all plugin options
-$options = [
+$opay_options = [
     'opay_backend_url',
     'opay_environment',
     'opay_test_pk',
@@ -19,8 +19,8 @@ $options = [
     'opay_db_version',
 ];
 
-foreach ( $options as $option ) {
-    delete_option( $option );
+foreach ( $opay_options as $opay_option ) {
+    delete_option( $opay_option );
 }
 
 // Drop the webhook log table

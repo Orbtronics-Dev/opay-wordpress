@@ -87,8 +87,8 @@ class Opay_Shortcodes {
             set_transient( $cache_key, $button_data, 5 * MINUTE_IN_SECONDS );
         }
 
-        $label       = esc_html( $atts['label'] );
-        $backend_url = esc_attr( Opay_Auth::get_backend_url() );
+        $label       = $atts['label'];
+        $backend_url = Opay_Auth::get_backend_url();
         $amount      = isset( $button_data['amount'] ) ? (int) $button_data['amount'] : 0;
         $currency    = isset( $button_data['currency'] ) ? strtoupper( $button_data['currency'] ) : 'USD';
         $name        = isset( $button_data['name'] ) ? esc_html( $button_data['name'] ) : '';
@@ -100,11 +100,11 @@ class Opay_Shortcodes {
         ?>
         <div class="opay-button-wrap"
              data-button-id="<?php echo esc_attr( $button_id ); ?>"
-             data-backend-url="<?php echo $backend_url; ?>">
+             data-backend-url="<?php echo esc_url( $backend_url ); ?>">
             <button type="button"
                     class="opay-pay-btn"
                     data-button-id="<?php echo esc_attr( $button_id ); ?>">
-                <?php echo $label; ?>
+                <?php echo esc_html( $label ); ?>
                 <span class="opay-amount">
                     (<?php echo esc_html( $currency . ' ' . $display_amount ); ?>)
                 </span>
