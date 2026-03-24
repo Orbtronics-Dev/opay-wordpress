@@ -63,8 +63,6 @@ register_activation_hook( __FILE__, 'opay_activate' );
  * Boot the plugin after all plugins are loaded.
  */
 function opay_init(): void {
-    load_plugin_textdomain( 'opay-payment-gateway', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-
     // Admin
     if ( is_admin() ) {
         new Opay_Admin();

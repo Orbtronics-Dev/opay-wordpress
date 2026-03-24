@@ -4,7 +4,8 @@
  */
 defined( 'ABSPATH' ) || exit;
 
-$active_tab  = sanitize_key( $_GET['tab'] ?? 'api-keys' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only tab navigation, no data mutation.
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Read-only tab navigation, no data mutation.
+$opay_active_tab = sanitize_key( $_GET['tab'] ?? 'api-keys' );
 $environment = Opay_Auth::get_environment(); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 $backend_url = Opay_Auth::get_backend_url(); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 ?>
@@ -18,18 +19,18 @@ $backend_url = Opay_Auth::get_backend_url(); // phpcs:ignore WordPress.NamingCon
 
     <nav class="nav-tab-wrapper">
         <a href="?page=opay-settings&tab=api-keys"
-           class="nav-tab <?php echo $active_tab === 'api-keys' ? 'nav-tab-active' : ''; ?>">
+           class="nav-tab <?php echo $opay_active_tab === 'api-keys' ? 'nav-tab-active' : ''; ?>">
             <?php esc_html_e( 'API Keys', 'opay-payment-gateway' ); ?>
         </a>
 <a href="?page=opay-settings&tab=general"
-           class="nav-tab <?php echo $active_tab === 'general' ? 'nav-tab-active' : ''; ?>">
+           class="nav-tab <?php echo $opay_active_tab === 'general' ? 'nav-tab-active' : ''; ?>">
             <?php esc_html_e( 'General', 'opay-payment-gateway' ); ?>
         </a>
     </nav>
 
     <div id="opay-notice" class="opay-notice" style="display:none;"></div>
 
-    <?php if ( $active_tab === 'general' ) : ?>
+    <?php if ( $opay_active_tab === 'general' ) : ?>
     <!-- ------------------------------------------------------------------ -->
     <!-- General / Backend URL                                                -->
     <!-- ------------------------------------------------------------------ -->
@@ -84,7 +85,7 @@ $backend_url = Opay_Auth::get_backend_url(); // phpcs:ignore WordPress.NamingCon
         </form>
     </div>
 
-    <?php elseif ( $active_tab === 'api-keys' ) : ?>
+    <?php elseif ( $opay_active_tab === 'api-keys' ) : ?>
     <!-- ------------------------------------------------------------------ -->
     <!-- API Keys                                                              -->
     <!-- ------------------------------------------------------------------ -->
