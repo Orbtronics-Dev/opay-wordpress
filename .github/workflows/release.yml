@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build & Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Build plugin ZIP
+        run: |
+          PLUGIN_SLUG="opay-payment-gateway"
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          ZIP_NAME="${PLUGIN_SLUG}-${VERSION}.zip"
+
+          # Copy plugin files into a versioned folder so the ZIP extracts cleanly
+          mkdir -p "/tmp/${PLUGIN_SLUG}"
+          rsync -a \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.claude' \
+            --exclude='compose.yaml' \
+            --exclude='README.md' \
+            . "/tmp/${PLUGIN_SLUG}/"
+
+          cd /tmp
+          zip -r "${ZIP_NAME}" "${PLUGIN_SLUG}/"
+
+          echo "ZIP_PATH=/tmp/${ZIP_NAME}" >> "$GITHUB_ENV"
+          echo "ZIP_NAME=${ZIP_NAME}"       >> "$GITHUB_ENV"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "v${{ steps.version.outputs.VERSION }}"
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: true
+          files: ${{ env.ZIP_PATH }}
