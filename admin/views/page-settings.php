@@ -68,6 +68,21 @@ $backend_url = Opay_Auth::get_backend_url(); // phpcs:ignore WordPress.NamingCon
                     </td>
                 </tr>
                 <tr>
+                    <th scope="row">
+                        <label for="opay-webhook-secret"><?php esc_html_e( 'Webhook Secret', 'opay-payment-gateway' ); ?></label>
+                    </th>
+                    <td>
+                        <input type="password" id="opay-webhook-secret" name="webhook_secret"
+                               class="regular-text"
+                               value="<?php echo esc_attr( Opay_Auth::get_webhook_secret() ? str_repeat( '•', 24 ) : '' ); ?>"
+                               autocomplete="new-password"
+                               placeholder="<?php esc_attr_e( 'Leave blank to skip signature validation', 'opay-payment-gateway' ); ?>" />
+                        <p class="description">
+                            <?php esc_html_e( 'Used to verify the X-Opay-Signature header on incoming webhooks. Must match the secret configured on the backend.', 'opay-payment-gateway' ); ?>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
                     <th scope="row"></th>
                     <td>
                         <p class="description opay-webhook-url">

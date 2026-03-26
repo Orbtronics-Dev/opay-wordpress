@@ -149,6 +149,30 @@ class Opay_Auth {
     }
 
     // -------------------------------------------------------------------------
+    // Webhook secret (HMAC signing key)
+    // -------------------------------------------------------------------------
+
+    public static function get_webhook_secret(): string {
+        $encrypted = get_option( 'opay_webhook_secret', '' );
+        if ( ! $encrypted ) {
+            return '';
+        }
+        $decrypted = self::decrypt( $encrypted );
+        return false !== $decrypted ? $decrypted : '';
+    }
+
+    public static function set_webhook_secret( string $secret ): void {
+        if ( '' === $secret ) {
+            delete_option( 'opay_webhook_secret' );
+            return;
+        }
+        $encrypted = self::encrypt( $secret );
+        if ( false !== $encrypted ) {
+            update_option( 'opay_webhook_secret', $encrypted );
+        }
+    }
+
+    // -------------------------------------------------------------------------
     // Convenience: are API keys present?
     // -------------------------------------------------------------------------
 

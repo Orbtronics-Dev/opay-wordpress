@@ -29,7 +29,20 @@ class Opay_Webhook_Handler {
      * Handle an incoming webhook POST.
      */
     public static function handle( WP_REST_Request $request ): WP_REST_Response {
-        $body    = $request->get_body();
+        $body = $request->get_body();
+
+        // Validate HMAC-SHA256 signature when a webhook secret is configured.
+        $secret = Opay_Auth::get_webhook_secret();
+        if ( $secret ) {
+            $signature = (string) $request->get_header( 'x-opay-signature' );
+            $expected  = hash_hmac( 'sha256', $body, $secret );
+
+            if ( ! hash_equals( $expected, $signature ) ) {
+                self::log_invalid_signature( $signature );
+                return new WP_REST_Response( [ 'error' => 'Invalid signature' ], 401 );
+            }
+        }
+
         $payload = json_decode( $body, true );
 
         if ( ! is_array( $payload ) ) {
@@ -165,5 +178,10 @@ class Opay_Webhook_Handler {
             ],
             [ '%s', '%s', '%s', '%s', '%s' ]
         );
+    }
+
+    private static function log_invalid_signature( string $received ): void {
+        $preview = $received ? ( substr( $received, 0, 8 ) . '…' ) : '(none)';
+        error_log( "[Opay] Webhook rejected — invalid X-Opay-Signature: {$preview}" );
     }
 }

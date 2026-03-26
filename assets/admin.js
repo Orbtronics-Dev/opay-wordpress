@@ -52,10 +52,15 @@
 
     $( '#opay-general-form' ).on( 'submit', function ( e ) {
         e.preventDefault();
+        const webhookSecret = $( '#opay-webhook-secret' ).val().trim();
         const data = {
             backend_url: $( '#opay-backend-url' ).val().trim(),
             environment: $( '#opay-environment' ).val(),
         };
+        // Only send webhook_secret when the user has changed it (not placeholder dots)
+        if ( ! webhookSecret.startsWith( '•' ) ) {
+            data.webhook_secret = webhookSecret;
+        }
 
         ajaxPost( 'opay_save_settings', data, function ( err, res ) {
             if ( err ) {

@@ -16,6 +16,12 @@ class Opay_Admin {
             'opay_save_keys',
             'opay_save_settings',
             'opay_refresh_api_keys',
+            'opay_login',
+            'opay_logout',
+            'opay_load_transactions',
+            'opay_load_buttons',
+            'opay_create_button',
+            'opay_delete_button',
         ];
 
         foreach ( $ajax_actions as $action ) {
@@ -126,6 +132,24 @@ class Opay_Admin {
             case 'opay_refresh_api_keys':
                 $this->ajax_refresh_api_keys();
                 break;
+            case 'opay_login':
+                $this->ajax_login();
+                break;
+            case 'opay_logout':
+                $this->ajax_logout();
+                break;
+            case 'opay_load_transactions':
+                $this->ajax_load_transactions();
+                break;
+            case 'opay_load_buttons':
+                $this->ajax_load_buttons();
+                break;
+            case 'opay_create_button':
+                $this->ajax_create_button();
+                break;
+            case 'opay_delete_button':
+                $this->ajax_delete_button();
+                break;
             default:
                 wp_send_json_error( [ 'message' => 'Unknown action.' ], 400 );
         }
@@ -165,6 +189,13 @@ class Opay_Admin {
         }
         Opay_Auth::set_environment( $environment );
 
+        // Only update webhook secret when explicitly submitted (key present in POST)
+        if ( array_key_exists( 'webhook_secret', $_POST ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+            Opay_Auth::set_webhook_secret(
+                sanitize_text_field( wp_unslash( $_POST['webhook_secret'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
+            );
+        }
+
         wp_send_json_success( [ 'message' => 'Settings saved.' ] );
     }
 
@@ -176,5 +207,105 @@ class Opay_Admin {
         }
 
         wp_send_json_success( $result['data'] );
+    }
+
+    private function ajax_login(): void {
+        // phpcs:disable WordPress.Security.NonceVerification.Missing
+        $email    = sanitize_email( wp_unslash( $_POST['email'] ?? '' ) );
+        $password = wp_unslash( $_POST['password'] ?? '' );
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
+
+        $result = Opay_API::login( $email, $password );
+
+        if ( $result['error'] ) {
+            wp_send_json_error( [ 'message' => $result['error'] ] );
+            return;
+        }
+
+        $token = $result['data']['token'] ?? '';
+        if ( ! $token ) {
+            wp_send_json_error( [ 'message' => 'No token in response.' ] );
+            return;
+        }
+
+        Opay_Auth::set_sanctum_token( $token );
+        wp_send_json_success( [ 'message' => 'Logged in.' ] );
+    }
+
+    private function ajax_logout(): void {
+        Opay_Auth::clear_sanctum_token();
+        wp_send_json_success( [ 'message' => 'Logged out.' ] );
+    }
+
+    private function ajax_load_transactions(): void {
+        // phpcs:disable WordPress.Security.NonceVerification.Missing
+        $filters = [ 'page' => max( 1, (int) ( $_POST['page'] ?? 1 ) ) ];
+        foreach ( [ 'search', 'status', 'from', 'to' ] as $key ) {
+            $val = sanitize_text_field( wp_unslash( $_POST[ $key ] ?? '' ) );
+            if ( '' !== $val ) {
+                $filters[ $key ] = $val;
+            }
+        }
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
+
+        $result = Opay_API::list_transactions( $filters );
+
+        if ( $result['error'] ) {
+            wp_send_json_error( [ 'message' => $result['error'] ] );
+            return;
+        }
+
+        wp_send_json_success( $result['data'] );
+    }
+
+    private function ajax_load_buttons(): void {
+        $mode   = sanitize_key( $_POST['mode'] ?? Opay_Auth::get_environment() ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        $result = Opay_API::list_payment_buttons( $mode );
+
+        if ( $result['error'] ) {
+            wp_send_json_error( [ 'message' => $result['error'] ] );
+            return;
+        }
+
+        wp_send_json_success( $result['data'] );
+    }
+
+    private function ajax_create_button(): void {
+        // phpcs:disable WordPress.Security.NonceVerification.Missing
+        $data = [
+            'name'        => sanitize_text_field( wp_unslash( $_POST['name'] ?? '' ) ),
+            'amount'      => (int) ( $_POST['amount'] ?? 0 ),
+            'currency'    => strtoupper( sanitize_text_field( wp_unslash( $_POST['currency'] ?? '' ) ) ),
+            'description' => sanitize_textarea_field( wp_unslash( $_POST['description'] ?? '' ) ),
+            'mode'        => sanitize_key( $_POST['mode'] ?? Opay_Auth::get_environment() ),
+        ];
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
+
+        $result = Opay_API::create_payment_button( $data );
+
+        if ( $result['error'] ) {
+            wp_send_json_error( [ 'message' => $result['error'] ] );
+            return;
+        }
+
+        wp_send_json_success( $result['data'] );
+    }
+
+    private function ajax_delete_button(): void {
+        $id = sanitize_text_field( wp_unslash( $_POST['id'] ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+        if ( ! $id ) {
+            wp_send_json_error( [ 'message' => 'Missing button ID.' ] );
+            return;
+        }
+
+        $result = Opay_API::delete_payment_button( $id );
+
+        if ( $result['error'] ) {
+            wp_send_json_error( [ 'message' => $result['error'] ] );
+            return;
+        }
+
+        wp_send_json_success( [ 'message' => 'Button deleted.' ] );
     }
 }
