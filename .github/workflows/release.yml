@@ -1,9 +1,14 @@
 name: Release
 
 on:
+  workflow_run:
+    workflows:
+      - "Static Analysis"
+    types:
+      - completed
   push:
     tags:
-      - 'v*.*.*'
+      - "v*.*.*"
 
 permissions:
   contents: write
