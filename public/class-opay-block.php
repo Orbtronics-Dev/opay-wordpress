@@ -1,20 +1,23 @@
 <?php
+
 /**
  * Opay_Block — registers the opay/payment-button Gutenberg block.
  *
  * The block is built from block/block.json and outputs a static
  * [opay_button id="..."] shortcode that is processed by Opay_Shortcodes.
  */
-
 defined( 'ABSPATH' ) || exit;
 
-class Opay_Block {
+class Opay_Block
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         add_action( 'init', [ $this, 'register_block' ] );
     }
 
-    public function register_block(): void {
+    public function register_block(): void
+    {
         if ( ! function_exists( 'register_block_type' ) ) {
             return;
         }
@@ -33,7 +36,8 @@ class Opay_Block {
     /**
      * Server-side render callback: output the shortcode for front-end display.
      */
-    public function render( array $attributes ): string {
+    public function render( array $attributes ): string
+    {
         $button_id = sanitize_text_field( $attributes['buttonId'] ?? '' );
         $label     = sanitize_text_field( $attributes['label'] ?? __( 'Pay Now', 'opay-payment-gateway' ) );
 
@@ -47,7 +51,8 @@ class Opay_Block {
     /**
      * Pass available payment buttons to the block editor for the dropdown.
      */
-    public function enqueue_editor_data(): void {
+    public function enqueue_editor_data(): void
+    {
         $result  = Opay_API::list_payment_buttons( Opay_Auth::get_environment() );
         $buttons = [];
 

@@ -1,0 +1,15 @@
+{
+  "name": "orbtronics/opay-wordpress",
+  "description": "Integrates Opay payment infrastructure with WordPress and WooCommerce",
+  "type": "project",
+  "authors": [
+    {
+      "name": "orbtronicsknowspeter",
+      "email": "jerele@orbtronicsltd.com"
+    }
+  ],
+  "require-dev": {
+    "tareq1988/wp-php-cs-fixer": "^1.0",
+    "friendsofphp/php-cs-fixer": "^3.94"
+  }
+}

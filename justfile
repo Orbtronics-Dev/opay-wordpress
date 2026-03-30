@@ -2,7 +2,7 @@ default:
     @just --list
 
 export:
-    zip -r opay-payment-gateway.zip . \
+    @zip -r opay-payment-gateway.zip . \
         --exclude='.git/*' \
         --exclude='.github/*' \
         --exclude='.claude/*' \

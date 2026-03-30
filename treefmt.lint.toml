@@ -1,0 +1,34 @@
+[formatter.php-cs-fixer]
+command = "php-cs-fixer"
+excludes = []
+includes = ["*.php"]
+options = ["fix", "--dry-run", "-vvv", "--config", "./.php-cs-fixer.php"]
+
+[formatter.prettier]
+command = "prettier"
+excludes = []
+includes = [
+  "*.cjs",
+  "*.css",
+  "*.html",
+  "*.js",
+  "*.json",
+  "*.json5",
+  "*.jsx",
+  "*.md",
+  "*.mdx",
+  "*.mjs",
+  "*.scss",
+  "*.ts",
+  "*.tsx",
+  "*.vue",
+  "*.yaml",
+  "*.yml",
+]
+options = ["--check"]
+
+[formatter.taplo]
+command = "taplo"
+excludes = []
+includes = ["*.toml"]
+options = ["lint"]

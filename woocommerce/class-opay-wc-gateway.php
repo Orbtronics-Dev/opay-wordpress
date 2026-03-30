@@ -5,12 +5,13 @@
  * Extends WC_Payment_Gateway. On checkout, creates an Opay payment session
  * via the secret API key and redirects the customer to the hosted checkout URL.
  */
-
 defined( 'ABSPATH' ) || exit;
 
-class Opay_WC_Gateway extends WC_Payment_Gateway {
+class Opay_WC_Gateway extends WC_Payment_Gateway
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->id                 = 'opay';
         $this->icon               = apply_filters( 'opay_gateway_icon', OPAY_PLUGIN_URL . 'assets/orbtronics.svg' );
         $this->method_title       = __( 'Opay', 'opay-payment-gateway' );
@@ -34,9 +35,10 @@ class Opay_WC_Gateway extends WC_Payment_Gateway {
     // Admin options page — logo + status banner + standard settings table
     // -------------------------------------------------------------------------
 
-    public function admin_options(): void {
-        $has_keys    = Opay_Auth::has_api_keys();
-        $backend_url = Opay_Auth::get_backend_url();
+    public function admin_options(): void
+    {
+        $has_keys     = Opay_Auth::has_api_keys();
+        $backend_url  = Opay_Auth::get_backend_url();
         $settings_url = admin_url( 'admin.php?page=opay-settings' );
         ?>
         <div style="display:flex;align-items:center;gap:16px;margin:12px 0 16px;">
@@ -53,31 +55,31 @@ class Opay_WC_Gateway extends WC_Payment_Gateway {
                     esc_html__( 'API credentials are managed on the %s — configure your backend URL and API keys there first, then enable this gateway below.', 'opay-payment-gateway' ),
                     '<a href="' . esc_url( $settings_url ) . '"><strong>' . esc_html__( 'Opay Payments settings page', 'opay-payment-gateway' ) . '</strong></a>'
                 );
-                ?>
+        ?>
             </p>
         </div>
 
-        <?php if ( ! $backend_url ) : ?>
+        <?php if ( ! $backend_url ) { ?>
         <div class="notice notice-error inline" style="margin:0 0 16px;">
             <p><?php esc_html_e( 'Backend URL is not set. Go to Opay Payments → Settings → General to add it.', 'opay-payment-gateway' ); ?></p>
         </div>
-        <?php elseif ( ! $has_keys ) : ?>
+        <?php } elseif ( ! $has_keys ) { ?>
         <div class="notice notice-warning inline" style="margin:0 0 16px;">
             <p><?php esc_html_e( 'No API keys configured. Payments cannot be processed until credentials are set.', 'opay-payment-gateway' ); ?></p>
         </div>
-        <?php else : ?>
+        <?php } else { ?>
         <div class="notice notice-success inline" style="margin:0 0 16px;">
             <p>
                 <?php
-                printf(
-                    /* translators: %s: environment label (Test / Live) */
-                    esc_html__( 'Connected — %s mode.', 'opay-payment-gateway' ),
-                    '<strong>' . esc_html( ucfirst( Opay_Auth::get_environment() ) ) . '</strong>'
-                );
-                ?>
+        printf(
+            /* translators: %s: environment label (Test / Live) */
+            esc_html__( 'Connected — %s mode.', 'opay-payment-gateway' ),
+            '<strong>' . esc_html( ucfirst( Opay_Auth::get_environment() ) ) . '</strong>'
+        );
+            ?>
             </p>
         </div>
-        <?php endif; ?>
+        <?php } ?>
 
         <table class="form-table">
             <?php $this->generate_settings_html(); ?>
@@ -89,7 +91,8 @@ class Opay_WC_Gateway extends WC_Payment_Gateway {
     // Gateway settings fields
     // -------------------------------------------------------------------------
 
-    public function init_form_fields(): void {
+    public function init_form_fields(): void
+    {
         $this->form_fields = [
             'enabled'     => [
                 'title'   => __( 'Enable / Disable', 'opay-payment-gateway' ),
@@ -117,21 +120,25 @@ class Opay_WC_Gateway extends WC_Payment_Gateway {
     // Process payment
     // -------------------------------------------------------------------------
 
-    public function process_payment( $order_id ): array {
+    public function process_payment( $order_id ): array
+    {
         $order = wc_get_order( $order_id );
 
         if ( ! $order ) {
             wc_add_notice( __( 'Order not found.', 'opay-payment-gateway' ), 'error' );
+
             return [ 'result' => 'failure' ];
         }
 
         // Validate that a secret key is available
         $sk = Opay_Auth::get_sk();
+
         if ( ! $sk ) {
             wc_add_notice(
                 __( 'Payment configuration error. Please contact the site administrator.', 'opay-payment-gateway' ),
                 'error'
             );
+
             return [ 'result' => 'failure' ];
         }
 
@@ -164,6 +171,7 @@ class Opay_WC_Gateway extends WC_Payment_Gateway {
                 ),
                 'error'
             );
+
             return [ 'result' => 'failure' ];
         }
 
@@ -172,6 +180,7 @@ class Opay_WC_Gateway extends WC_Payment_Gateway {
 
         if ( ! $checkout_url ) {
             wc_add_notice( __( 'Payment gateway did not return a checkout URL.', 'opay-payment-gateway' ), 'error' );
+
             return [ 'result' => 'failure' ];
         }
 

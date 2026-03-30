@@ -5,17 +5,19 @@
  * Fetches button data from the Opay backend (cached for 5 min) and renders
  * a form that POSTs to the backend's /pay/{buttonId}/checkout endpoint.
  */
-
 defined( 'ABSPATH' ) || exit;
 
-class Opay_Shortcodes {
+class Opay_Shortcodes
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         add_shortcode( 'opay_button', [ $this, 'render_button' ] );
         add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_assets' ] );
     }
 
-    public function enqueue_assets(): void {
+    public function enqueue_assets(): void
+    {
         if ( ! is_singular() ) {
             return;
         }
@@ -53,10 +55,11 @@ class Opay_Shortcodes {
     /**
      * Shortcode handler.
      *
-     * @param array  $atts  Shortcode attributes: id, label
-     * @param string $content  Unused
+     * @param array  $atts    Shortcode attributes: id, label
+     * @param string $content Unused
      */
-    public function render_button( $atts, string $content = '' ): string {
+    public function render_button( $atts, string $content = '' ): string
+    {
         $atts = shortcode_atts(
             [
                 'id'    => '',

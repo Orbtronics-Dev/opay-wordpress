@@ -1,19 +1,21 @@
 <?php
+
 /**
  * Opay_Webhook_Handler — registers POST /wp-json/opay/v1/webhook.
  *
  * Logs every incoming event to wp_opay_webhook_log, then fires action hooks
  * and (when WooCommerce is active) updates the corresponding order.
  */
-
 defined( 'ABSPATH' ) || exit;
 
-class Opay_Webhook_Handler {
+class Opay_Webhook_Handler
+{
 
     /**
-     * Register the REST route.  Called on rest_api_init.
-     */
-    public static function register_routes(): void {
+         * Register the REST route.  Called on rest_api_init.
+         */
+    public static function register_routes(): void
+    {
         register_rest_route(
             'opay/v1',
             '/webhook',
@@ -28,17 +30,20 @@ class Opay_Webhook_Handler {
     /**
      * Handle an incoming webhook POST.
      */
-    public static function handle( WP_REST_Request $request ): WP_REST_Response {
+    public static function handle( WP_REST_Request $request ): WP_REST_Response
+    {
         $body = $request->get_body();
 
         // Validate HMAC-SHA256 signature when a webhook secret is configured.
         $secret = Opay_Auth::get_webhook_secret();
+
         if ( $secret ) {
             $signature = (string) $request->get_header( 'x-opay-signature' );
             $expected  = hash_hmac( 'sha256', $body, $secret );
 
             if ( ! hash_equals( $expected, $signature ) ) {
                 self::log_invalid_signature( $signature );
+
                 return new WP_REST_Response( [ 'error' => 'Invalid signature' ], 401 );
             }
         }
@@ -53,6 +58,7 @@ class Opay_Webhook_Handler {
 
         // Capture headers for logging
         $headers = [];
+
         foreach ( $request->get_headers() as $key => $values ) {
             $headers[ $key ] = implode( ', ', (array) $values );
         }
@@ -70,7 +76,8 @@ class Opay_Webhook_Handler {
     // Action hook dispatch
     // -------------------------------------------------------------------------
 
-    private static function dispatch_hooks( string $event_type, array $payload ): void {
+    private static function dispatch_hooks( string $event_type, array $payload ): void
+    {
         switch ( $event_type ) {
             case 'payment.succeeded':
             case 'payment_intent.succeeded':
@@ -103,7 +110,8 @@ class Opay_Webhook_Handler {
     // WooCommerce order integration
     // -------------------------------------------------------------------------
 
-    private static function maybe_complete_wc_order( array $payload ): void {
+    private static function maybe_complete_wc_order( array $payload ): void
+    {
         if ( ! function_exists( 'wc_get_order' ) ) {
             return;
         }
@@ -120,6 +128,7 @@ class Opay_Webhook_Handler {
         }
 
         $order = wc_get_order( (int) $order_id );
+
         if ( ! $order ) {
             return;
         }
@@ -136,7 +145,8 @@ class Opay_Webhook_Handler {
         }
     }
 
-    private static function maybe_fail_wc_order( array $payload ): void {
+    private static function maybe_fail_wc_order( array $payload ): void
+    {
         if ( ! function_exists( 'wc_get_order' ) ) {
             return;
         }
@@ -150,6 +160,7 @@ class Opay_Webhook_Handler {
         }
 
         $order = wc_get_order( (int) $order_id );
+
         if ( ! $order ) {
             return;
         }
@@ -164,7 +175,8 @@ class Opay_Webhook_Handler {
     // DB logging
     // -------------------------------------------------------------------------
 
-    private static function log_event( string $event_type, string $payload, array $headers ): void {
+    private static function log_event( string $event_type, string $payload, array $headers ): void
+    {
         global $wpdb;
 
         $wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
@@ -180,7 +192,8 @@ class Opay_Webhook_Handler {
         );
     }
 
-    private static function log_invalid_signature( string $received ): void {
+    private static function log_invalid_signature( string $received ): void
+    {
         $preview = $received ? ( substr( $received, 0, 8 ) . '…' ) : '(none)';
         error_log( "[Opay] Webhook rejected — invalid X-Opay-Signature: {$preview}" );
     }
