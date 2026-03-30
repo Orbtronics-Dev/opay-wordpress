@@ -12,7 +12,8 @@ export:
         --exclude='.envrc' \
         --exclude='*.nix' \
         --exclude='flake.lock' \
-        --exclude='vendor/*'
+        --exclude='vendor/*' \
+        --exclude='.php-cs-fixer.php'
 
 format:
     @nix develop -c treefmt
