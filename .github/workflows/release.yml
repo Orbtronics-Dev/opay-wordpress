@@ -41,6 +41,11 @@ jobs:
             --exclude='.gitignore' \
             --exclude='compose.yaml' \
             --exclude='README.md' \
+            --exclude='.envrc' \
+            --exclude='*.nix' \
+            --exclude='flake.lock' \
+            --exclude='.php-cs-fixer.php' \
+            --exclude='*.zip' \
             . "/tmp/${PLUGIN_SLUG}/"
 
           cd /tmp
