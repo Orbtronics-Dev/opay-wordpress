@@ -1,7 +1,7 @@
 services:
   wordpress:
     image: wordpress
-    restart: always
+    # restart: always
     ports:
       - 8080:80
     environment:
@@ -19,7 +19,7 @@ services:
 
   database:
     image: mysql:8.0
-    restart: always
+    # restart: always
     environment:
       MYSQL_DATABASE: ${DATABASE_NAME:-orbtronics_db}
       MYSQL_USER: ${DATABASE_USER:-orbtronics}
