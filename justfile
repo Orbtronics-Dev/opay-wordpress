@@ -7,4 +7,8 @@ export:
         --exclude='.github/*' \
         --exclude='.claude/*' \
         --exclude='.gitignore' \
-        --exclude='*.zip'
+        --exclude='*.zip' \
+        --exclude='.direnv/*' \
+        --exclude='.envrc' \
+        --exclude='*.nix' \
+        --exclude='flake.lock'
