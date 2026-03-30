@@ -6,8 +6,8 @@ defined( 'ABSPATH' ) || exit;
 
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Read-only tab navigation, no data mutation.
 $opay_active_tab = sanitize_key( $_GET['tab'] ?? 'api-keys' );
-$environment = Opay_Auth::get_environment(); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
-$backend_url = Opay_Auth::get_backend_url(); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+$environment     = Opay_Auth::get_environment(); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+$backend_url     = Opay_Auth::get_backend_url(); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 ?>
 <div class="wrap opay-admin-wrap">
     <div class="opay-admin-header">
@@ -30,7 +30,7 @@ $backend_url = Opay_Auth::get_backend_url(); // phpcs:ignore WordPress.NamingCon
 
     <div id="opay-notice" class="opay-notice" style="display:none;"></div>
 
-    <?php if ( $opay_active_tab === 'general' ) : ?>
+    <?php if ( $opay_active_tab === 'general' ) { ?>
     <!-- ------------------------------------------------------------------ -->
     <!-- General / Backend URL                                                -->
     <!-- ------------------------------------------------------------------ -->
@@ -100,7 +100,7 @@ $backend_url = Opay_Auth::get_backend_url(); // phpcs:ignore WordPress.NamingCon
         </form>
     </div>
 
-    <?php elseif ( $opay_active_tab === 'api-keys' ) : ?>
+    <?php } elseif ( $opay_active_tab === 'api-keys' ) { ?>
     <!-- ------------------------------------------------------------------ -->
     <!-- API Keys                                                              -->
     <!-- ------------------------------------------------------------------ -->
@@ -108,7 +108,7 @@ $backend_url = Opay_Auth::get_backend_url(); // phpcs:ignore WordPress.NamingCon
         <h2><?php esc_html_e( 'API Keys', 'opay-payment-gateway' ); ?></h2>
         <p><?php esc_html_e( 'Paste your Opay API keys below. Secret keys are stored encrypted.', 'opay-payment-gateway' ); ?></p>
 
-        <?php foreach ( [ 'test', 'live' ] as $env ) : // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound ?>
+        <?php foreach ( [ 'test', 'live' ] as $env ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound?>
         <h3><?php echo esc_html( ucfirst( $env ) ) . ' ' . esc_html__( 'Keys', 'opay-payment-gateway' ); ?></h3>
         <form class="opay-keys-form" data-env="<?php echo esc_attr( $env ); ?>">
             <table class="form-table">
@@ -141,11 +141,11 @@ $backend_url = Opay_Auth::get_backend_url(); // phpcs:ignore WordPress.NamingCon
                 <?php
                 /* translators: %s: environment name, e.g. "Test" or "Live" */
                 printf( esc_html__( 'Save %s Keys', 'opay-payment-gateway' ), esc_html( ucfirst( $env ) ) );
-                ?>
+            ?>
             </button>
         </form>
-        <?php endforeach; ?>
+        <?php } ?>
     </div>
 
-    <?php endif; ?>
+    <?php } ?>
 </div>

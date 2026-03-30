@@ -16,12 +16,21 @@
           config = { allowUnfree = true; };
         };
       in {
-				devShells = {
-					default = pkgs.mkShell {
-						packages = with pkgs; [
-							claude-code
-						];
-					};
-				};
+        devShells = {
+          default = pkgs.mkShell {
+            packages = with pkgs; [
+              php
+              phpPackages.composer
+
+              claude-code
+              gnumake
+              treefmt
+
+              prettier
+              phpPackages.php-cs-fixer
+							taplo
+            ];
+          };
+        };
       });
 }

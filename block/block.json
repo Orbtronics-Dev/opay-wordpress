@@ -1,31 +1,31 @@
 {
-    "$schema": "https://schemas.wp.org/trunk/block.json",
-    "apiVersion": 3,
-    "name": "opay/payment-button",
-    "version": "0.1.1",
-    "title": "Opay Payment Button",
-    "category": "widgets",
-    "description": "Embed an Opay payment button on your page. Customers click to pay via a secure hosted checkout.",
-    "keywords": ["opay", "payment", "button", "checkout"],
-    "supports": {
-        "html": false,
-        "align": ["left", "center", "right"]
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "opay/payment-button",
+  "version": "0.1.1",
+  "title": "Opay Payment Button",
+  "category": "widgets",
+  "description": "Embed an Opay payment button on your page. Customers click to pay via a secure hosted checkout.",
+  "keywords": ["opay", "payment", "button", "checkout"],
+  "supports": {
+    "html": false,
+    "align": ["left", "center", "right"]
+  },
+  "attributes": {
+    "buttonId": {
+      "type": "string",
+      "default": ""
     },
-    "attributes": {
-        "buttonId": {
-            "type": "string",
-            "default": ""
-        },
-        "label": {
-            "type": "string",
-            "default": "Pay Now"
-        },
-        "align": {
-            "type": "string",
-            "default": "left"
-        }
+    "label": {
+      "type": "string",
+      "default": "Pay Now"
     },
-    "editorScript": "file:./edit.js",
-    "viewScript": "file:./view.js",
-    "style": "file:../assets/public.css"
+    "align": {
+      "type": "string",
+      "default": "left"
+    }
+  },
+  "editorScript": "file:./edit.js",
+  "viewScript": "file:./view.js",
+  "style": "file:../assets/public.css"
 }

@@ -24,7 +24,7 @@ services:
       MYSQL_DATABASE: ${DATABASE_NAME:-orbtronics_db}
       MYSQL_USER: ${DATABASE_USER:-orbtronics}
       MYSQL_PASSWORD: ${DATABASE_PASSWORD:-orbtronics}
-      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+      MYSQL_RANDOM_ROOT_PASSWORD: "1"
     volumes:
       - database:/var/lib/mysql
 

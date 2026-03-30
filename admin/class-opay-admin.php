@@ -1,14 +1,16 @@
 <?php
+
 /**
  * Opay_Admin — registers admin menus, settings, and AJAX handlers.
  */
-
 defined( 'ABSPATH' ) || exit;
 
-class Opay_Admin {
+class Opay_Admin
+{
 
-    public function __construct() {
-        add_action( 'admin_menu',            [ $this, 'register_menu' ] );
+    public function __construct()
+    {
+        add_action( 'admin_menu', [ $this, 'register_menu' ] );
         add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
 
         // AJAX handlers
@@ -33,7 +35,8 @@ class Opay_Admin {
     // Menu
     // -------------------------------------------------------------------------
 
-    public function register_menu(): void {
+    public function register_menu(): void
+    {
         $icon_path = OPAY_PLUGIN_DIR . 'assets/icon.svg';
         $menu_icon = file_exists( $icon_path )
             ? 'data:image/svg+xml;base64,' . base64_encode( file_get_contents( $icon_path ) ) // phpcs:ignore WordPress.WP.AlternativeFunctions
@@ -57,14 +60,14 @@ class Opay_Admin {
             'opay-settings',
             [ $this, 'render_settings_page' ]
         );
-
     }
 
     // -------------------------------------------------------------------------
     // Assets
     // -------------------------------------------------------------------------
 
-    public function enqueue_assets( string $hook ): void {
+    public function enqueue_assets( string $hook ): void
+    {
         $opay_pages = [
             'toplevel_page_opay-settings',
         ];
@@ -92,8 +95,8 @@ class Opay_Admin {
             'opay-admin',
             'opayAdmin',
             [
-                'ajaxUrl'   => admin_url( 'admin-ajax.php' ),
-                'nonce'     => wp_create_nonce( 'opay_admin_nonce' ),
+                'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
+                'nonce'      => wp_create_nonce( 'opay_admin_nonce' ),
                 'backendUrl' => Opay_Auth::get_backend_url(),
             ]
         );
@@ -103,7 +106,8 @@ class Opay_Admin {
     // Page renderers
     // -------------------------------------------------------------------------
 
-    public function render_settings_page(): void {
+    public function render_settings_page(): void
+    {
         require OPAY_PLUGIN_DIR . 'admin/views/page-settings.php';
     }
 
@@ -111,7 +115,8 @@ class Opay_Admin {
     // AJAX dispatcher
     // -------------------------------------------------------------------------
 
-    public function handle_ajax(): void {
+    public function handle_ajax(): void
+    {
         $action = sanitize_key( $_POST['action'] ?? '' );
 
         if ( ! check_ajax_referer( 'opay_admin_nonce', 'nonce', false ) ) {
@@ -126,27 +131,35 @@ class Opay_Admin {
             case 'opay_save_keys':
                 $this->ajax_save_keys();
                 break;
+
             case 'opay_save_settings':
                 $this->ajax_save_settings();
                 break;
+
             case 'opay_refresh_api_keys':
                 $this->ajax_refresh_api_keys();
                 break;
+
             case 'opay_login':
                 $this->ajax_login();
                 break;
+
             case 'opay_logout':
                 $this->ajax_logout();
                 break;
+
             case 'opay_load_transactions':
                 $this->ajax_load_transactions();
                 break;
+
             case 'opay_load_buttons':
                 $this->ajax_load_buttons();
                 break;
+
             case 'opay_create_button':
                 $this->ajax_create_button();
                 break;
+
             case 'opay_delete_button':
                 $this->ajax_delete_button();
                 break;
@@ -159,7 +172,8 @@ class Opay_Admin {
     // AJAX handlers
     // -------------------------------------------------------------------------
 
-    private function ajax_save_keys(): void {
+    private function ajax_save_keys(): void
+    {
         // Nonce already verified in handle_ajax() before this method is called.
         // phpcs:disable WordPress.Security.NonceVerification.Missing
         $env = sanitize_key( $_POST['environment'] ?? Opay_Auth::get_environment() );
@@ -170,6 +184,7 @@ class Opay_Admin {
         if ( $pk ) {
             Opay_Auth::set_pk( $pk, $env );
         }
+
         if ( $sk ) {
             Opay_Auth::set_sk( $sk, $env );
         }
@@ -177,7 +192,8 @@ class Opay_Admin {
         wp_send_json_success( [ 'message' => 'API keys saved.' ] );
     }
 
-    private function ajax_save_settings(): void {
+    private function ajax_save_settings(): void
+    {
         // Nonce already verified in handle_ajax() before this method is called.
         // phpcs:disable WordPress.Security.NonceVerification.Missing
         $backend_url = esc_url_raw( wp_unslash( $_POST['backend_url'] ?? '' ) );
@@ -199,7 +215,8 @@ class Opay_Admin {
         wp_send_json_success( [ 'message' => 'Settings saved.' ] );
     }
 
-    private function ajax_refresh_api_keys(): void {
+    private function ajax_refresh_api_keys(): void
+    {
         $result = Opay_API::get_api_keys();
 
         if ( $result['error'] ) {
@@ -209,7 +226,8 @@ class Opay_Admin {
         wp_send_json_success( $result['data'] );
     }
 
-    private function ajax_login(): void {
+    private function ajax_login(): void
+    {
         // phpcs:disable WordPress.Security.NonceVerification.Missing
         $email    = sanitize_email( wp_unslash( $_POST['email'] ?? '' ) );
         $password = wp_unslash( $_POST['password'] ?? '' );
@@ -219,12 +237,15 @@ class Opay_Admin {
 
         if ( $result['error'] ) {
             wp_send_json_error( [ 'message' => $result['error'] ] );
+
             return;
         }
 
         $token = $result['data']['token'] ?? '';
+
         if ( ! $token ) {
             wp_send_json_error( [ 'message' => 'No token in response.' ] );
+
             return;
         }
 
@@ -232,16 +253,20 @@ class Opay_Admin {
         wp_send_json_success( [ 'message' => 'Logged in.' ] );
     }
 
-    private function ajax_logout(): void {
+    private function ajax_logout(): void
+    {
         Opay_Auth::clear_sanctum_token();
         wp_send_json_success( [ 'message' => 'Logged out.' ] );
     }
 
-    private function ajax_load_transactions(): void {
+    private function ajax_load_transactions(): void
+    {
         // phpcs:disable WordPress.Security.NonceVerification.Missing
         $filters = [ 'page' => max( 1, (int) ( $_POST['page'] ?? 1 ) ) ];
+
         foreach ( [ 'search', 'status', 'from', 'to' ] as $key ) {
             $val = sanitize_text_field( wp_unslash( $_POST[ $key ] ?? '' ) );
+
             if ( '' !== $val ) {
                 $filters[ $key ] = $val;
             }
@@ -252,25 +277,29 @@ class Opay_Admin {
 
         if ( $result['error'] ) {
             wp_send_json_error( [ 'message' => $result['error'] ] );
+
             return;
         }
 
         wp_send_json_success( $result['data'] );
     }
 
-    private function ajax_load_buttons(): void {
+    private function ajax_load_buttons(): void
+    {
         $mode   = sanitize_key( $_POST['mode'] ?? Opay_Auth::get_environment() ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
         $result = Opay_API::list_payment_buttons( $mode );
 
         if ( $result['error'] ) {
             wp_send_json_error( [ 'message' => $result['error'] ] );
+
             return;
         }
 
         wp_send_json_success( $result['data'] );
     }
 
-    private function ajax_create_button(): void {
+    private function ajax_create_button(): void
+    {
         // phpcs:disable WordPress.Security.NonceVerification.Missing
         $data = [
             'name'        => sanitize_text_field( wp_unslash( $_POST['name'] ?? '' ) ),
@@ -285,17 +314,20 @@ class Opay_Admin {
 
         if ( $result['error'] ) {
             wp_send_json_error( [ 'message' => $result['error'] ] );
+
             return;
         }
 
         wp_send_json_success( $result['data'] );
     }
 
-    private function ajax_delete_button(): void {
+    private function ajax_delete_button(): void
+    {
         $id = sanitize_text_field( wp_unslash( $_POST['id'] ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
         if ( ! $id ) {
             wp_send_json_error( [ 'message' => 'Missing button ID.' ] );
+
             return;
         }
 
@@ -303,6 +335,7 @@ class Opay_Admin {
 
         if ( $result['error'] ) {
             wp_send_json_error( [ 'message' => $result['error'] ] );
+
             return;
         }
 

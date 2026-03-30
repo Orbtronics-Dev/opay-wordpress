@@ -1,9 +1,9 @@
 <?php
+
 /**
  * Uninstall — runs when the plugin is deleted from the WordPress admin.
  * Removes all stored options and drops the webhook log table.
  */
-
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
 // Remove all plugin options

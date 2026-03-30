@@ -18,11 +18,11 @@ A WordPress plugin that integrates the [Opay](https://orbtronics.co/opay) paymen
 
 ## Requirements
 
-| Dependency | Minimum |
-|---|---|
-| PHP | 8.0 |
-| WordPress | 6.0 |
-| WooCommerce | 7.0 |
+| Dependency  | Minimum |
+| ----------- | ------- |
+| PHP         | 8.0     |
+| WordPress   | 6.0     |
+| WooCommerce | 7.0     |
 
 ---
 
@@ -54,20 +54,20 @@ First-run checklist:
 
 Navigate to **Opay Payments → Settings → API Keys**.
 
-| Field | Description |
-|---|---|
-| Publishable Key | Public key prefixed `opay_test_pk_` or `opay_live_pk_` |
-| Secret Key | Server-side key used to create payment sessions. Stored encrypted. |
+| Field           | Description                                                        |
+| --------------- | ------------------------------------------------------------------ |
+| Publishable Key | Public key prefixed `opay_test_pk_` or `opay_live_pk_`             |
+| Secret Key      | Server-side key used to create payment sessions. Stored encrypted. |
 
 ### General Settings
 
 Navigate to **Opay Payments → Settings → General**.
 
-| Field | Description |
-|---|---|
+| Field       | Description                                                              |
+| ----------- | ------------------------------------------------------------------------ |
 | Backend URL | Base URL of your Opay backend, e.g. `https://staging.opay.orbtronics.co` |
-| Environment | `Test` or `Live` — determines which key pair is used |
-| Webhook URL | Read-only. Register this in your Opay dashboard. |
+| Environment | `Test` or `Live` — determines which key pair is used                     |
+| Webhook URL | Read-only. Register this in your Opay dashboard.                         |
 
 ---
 
@@ -119,13 +119,13 @@ Register your webhook URL (shown in **Settings → General**) in your Opay dashb
 
 The endpoint accepts `POST /wp-json/opay/v1/webhook` and dispatches the following WordPress action hooks:
 
-| Event | Action hook |
-|---|---|
-| `payment.succeeded` / `payment_intent.succeeded` | `opay_payment_succeeded` |
-| `payment.failed` / `payment_intent.payment_failed` | `opay_payment_failed` |
-| `charge.refunded` / `refund.created` | `opay_refund_created` |
+| Event                                                    | Action hook                 |
+| -------------------------------------------------------- | --------------------------- |
+| `payment.succeeded` / `payment_intent.succeeded`         | `opay_payment_succeeded`    |
+| `payment.failed` / `payment_intent.payment_failed`       | `opay_payment_failed`       |
+| `charge.refunded` / `refund.created`                     | `opay_refund_created`       |
 | `customer.subscription.updated` / `subscription.updated` | `opay_subscription_updated` |
-| Any other event | `opay_webhook_received` |
+| Any other event                                          | `opay_webhook_received`     |
 
 WooCommerce orders are automatically moved to `processing` on a succeeded event and `failed` on a failed event, matched via `metadata.order_id` in the payload.
 
@@ -150,10 +150,10 @@ Use `[opay_button]` to embed a hosted-checkout button on any page or post.
 [opay_button id="your-button-uuid" label="Buy Now"]
 ```
 
-| Attribute | Required | Default | Description |
-|---|---|---|---|
-| `id` | Yes | — | The payment button UUID from your Opay dashboard |
-| `label` | No | `Pay Now` | Button label text |
+| Attribute | Required | Default   | Description                                      |
+| --------- | -------- | --------- | ------------------------------------------------ |
+| `id`      | Yes      | —         | The payment button UUID from your Opay dashboard |
+| `label`   | No       | `Pay Now` | Button label text                                |
 
 Button data is fetched from the Opay backend and cached as a WordPress transient for 5 minutes.
 
@@ -169,11 +169,11 @@ The **Opay Payment Button** block is available in the **Widgets** category of th
 
 `Opay_API` is a thin static wrapper around `wp_remote_*`. Authentication is resolved automatically per path:
 
-| Path prefix | Auth |
-|---|---|
-| `/api/v1/*` | `Bearer {secret_key}` |
-| `/api/auth/*` | None |
-| `/api/pay/*` | None |
+| Path prefix                                | Auth                     |
+| ------------------------------------------ | ------------------------ |
+| `/api/v1/*`                                | `Bearer {secret_key}`    |
+| `/api/auth/*`                              | None                     |
+| `/api/pay/*`                               | None                     |
 | `/api/account/*`, `/api/payment-buttons/*` | `Bearer {sanctum_token}` |
 
 ---

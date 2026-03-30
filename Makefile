@@ -8,4 +8,11 @@ export:
 		--exclude='.direnv/*' \
 		--exclude='.envrc' \
 		--exclude='*.nix' \
-		--exclude='flake.lock'
+		--exclude='flake.lock' \
+		--exclude='vendor/*'
+	
+format:
+	nix develop -c treefmt
+
+lint:
+	nix develop -c treefmt --ci --config-file ./treefmt.lint.toml

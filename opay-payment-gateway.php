@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Name: Opay Payment Gateway
  * Plugin URI:  https://github.com/Orbtronics-Dev/opay-wordpress
@@ -15,11 +16,10 @@
  * WC requires at least: 7.0
  * WC tested up to: 10.6
  */
-
 defined( 'ABSPATH' ) || exit;
 
 // Plugin constants
-define( 'OPAY_VERSION',    '0.1.1' );
+define( 'OPAY_VERSION', '0.1.1' );
 define( 'OPAY_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'OPAY_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -34,10 +34,11 @@ require_once OPAY_PLUGIN_DIR . 'public/class-opay-block.php';
 /**
  * Activation hook — creates the webhook log table.
  */
-function opay_activate(): void {
+function opay_activate(): void
+{
     global $wpdb;
 
-    $table      = $wpdb->prefix . 'opay_webhook_log';
+    $table           = $wpdb->prefix . 'opay_webhook_log';
     $charset_collate = $wpdb->get_charset_collate();
 
     $sql = "CREATE TABLE IF NOT EXISTS {$table} (
@@ -62,7 +63,8 @@ register_activation_hook( __FILE__, 'opay_activate' );
 /**
  * Boot the plugin after all plugins are loaded.
  */
-function opay_init(): void {
+function opay_init(): void
+{
     // Admin
     if ( is_admin() ) {
         new Opay_Admin();
@@ -85,7 +87,8 @@ add_action( 'plugins_loaded', 'opay_init' );
 /**
  * Register the WooCommerce payment gateway class.
  */
-function opay_add_wc_gateway( array $gateways ): array {
+function opay_add_wc_gateway( array $gateways ): array
+{
     if ( ! class_exists( 'WC_Payment_Gateway' ) ) {
         return $gateways;
     }
@@ -96,17 +99,17 @@ function opay_add_wc_gateway( array $gateways ): array {
     return $gateways;
 }
 
-/**
+/*
  * Declare WooCommerce feature compatibility (HPOS + Checkout Blocks).
  */
 add_action( 'before_woocommerce_init', function (): void {
-    if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
-        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
+    if ( class_exists( Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+        Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
             'custom_order_tables',
             __FILE__,
             true
         );
-        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
+        Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
             'cart_checkout_blocks',
             __FILE__,
             true
@@ -114,7 +117,7 @@ add_action( 'before_woocommerce_init', function (): void {
     }
 } );
 
-/**
+/*
  * Register the Opay payment method with the WooCommerce Checkout Block.
  *
  * AbstractPaymentMethodType lives inside WooCommerce Blocks (bundled with WC 7+).

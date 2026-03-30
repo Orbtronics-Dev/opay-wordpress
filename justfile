@@ -2,7 +2,7 @@ default:
     @just --list
 
 export:
-    zip -r opay-payment-gateway.zip . \
+    @zip -r opay-payment-gateway.zip . \
         --exclude='.git/*' \
         --exclude='.github/*' \
         --exclude='.claude/*' \
@@ -11,4 +11,11 @@ export:
         --exclude='.direnv/*' \
         --exclude='.envrc' \
         --exclude='*.nix' \
-        --exclude='flake.lock'
+        --exclude='flake.lock' \
+        --exclude='vendor/*'
+
+format:
+    @nix develop -c treefmt
+
+lint:
+    @nix develop -c treefmt --ci --config-file ./treefmt.lint.toml
