@@ -195,6 +195,9 @@ class Opay_Webhook_Handler
     private static function log_invalid_signature( string $received ): void
     {
         $preview = $received ? ( substr( $received, 0, 8 ) . '…' ) : '(none)';
-        error_log( "[Opay] Webhook rejected — invalid X-Opay-Signature: {$preview}" );
+        wc_get_logger()->warning(
+            "Webhook rejected — invalid X-Opay-Signature: {$preview}",
+            [ 'source' => 'opay-webhook' ]
+        );
     }
 }

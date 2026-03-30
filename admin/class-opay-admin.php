@@ -230,7 +230,7 @@ class Opay_Admin
     {
         // phpcs:disable WordPress.Security.NonceVerification.Missing
         $email    = sanitize_email( wp_unslash( $_POST['email'] ?? '' ) );
-        $password = wp_unslash( $_POST['password'] ?? '' );
+        $password = sanitize_text_field( wp_unslash( $_POST['password'] ?? '' ) );
         // phpcs:enable WordPress.Security.NonceVerification.Missing
 
         $result = Opay_API::login( $email, $password );
@@ -262,7 +262,7 @@ class Opay_Admin
     private function ajax_load_transactions(): void
     {
         // phpcs:disable WordPress.Security.NonceVerification.Missing
-        $filters = [ 'page' => max( 1, (int) ( $_POST['page'] ?? 1 ) ) ];
+        $filters = [ 'page' => max( 1, (int) wp_unslash( $_POST['page'] ?? 1 ) ) ];
 
         foreach ( [ 'search', 'status', 'from', 'to' ] as $key ) {
             $val = sanitize_text_field( wp_unslash( $_POST[ $key ] ?? '' ) );
@@ -303,7 +303,7 @@ class Opay_Admin
         // phpcs:disable WordPress.Security.NonceVerification.Missing
         $data = [
             'name'        => sanitize_text_field( wp_unslash( $_POST['name'] ?? '' ) ),
-            'amount'      => (int) ( $_POST['amount'] ?? 0 ),
+            'amount'      => (int) wp_unslash( $_POST['amount'] ?? 0 ),
             'currency'    => strtoupper( sanitize_text_field( wp_unslash( $_POST['currency'] ?? '' ) ) ),
             'description' => sanitize_textarea_field( wp_unslash( $_POST['description'] ?? '' ) ),
             'mode'        => sanitize_key( $_POST['mode'] ?? Opay_Auth::get_environment() ),
