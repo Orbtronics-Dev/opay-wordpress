@@ -140,7 +140,12 @@ class Opay_API {
         $data   = json_decode( $body, true );
 
         if ( $status >= 400 ) {
-            $message = isset( $data['message'] ) ? $data['message'] : "HTTP {$status}";
+            // Backend returns {"error":{"type":"...","message":"..."}} for API errors.
+            // Fall back to top-level "message" (Laravel validation) then a generic label.
+            $message = $data['error']['message']
+                ?? ( is_string( $data['error'] ?? null ) ? $data['error'] : null )
+                ?? $data['message']
+                ?? "HTTP {$status}";
             return [ 'data' => $data, 'status' => $status, 'error' => $message ];
         }
 

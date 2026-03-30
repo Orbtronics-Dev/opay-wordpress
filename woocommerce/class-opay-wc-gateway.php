@@ -138,7 +138,7 @@ class Opay_WC_Gateway extends WC_Payment_Gateway {
         // Build payload
         $payload = [
             'amount'      => (int) round( $order->get_total() * 100 ), // Convert to cents
-            'currency'    => strtoupper( get_woocommerce_currency() ),
+            'currency'    => strtolower( get_woocommerce_currency() ),
             'customer'    => [
                 'email' => $order->get_billing_email(),
                 'name'  => trim( $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() ),
