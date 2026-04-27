@@ -19,7 +19,7 @@ const { buttons = [], environment = "test" } = window.opayBlockData || {};
 const buttonOptions = [
   {
     value: "",
-    label: __("— Select a payment button —", "opay-payment-gateway"),
+    label: __("— Select a payment button —", "orbtronics-payment-gateway"),
   },
   ...buttons,
 ];
@@ -34,21 +34,21 @@ export default function Edit({ attributes, setAttributes }) {
     <>
       <InspectorControls>
         <PanelBody
-          title={__("Button Settings", "opay-payment-gateway")}
+          title={__("Button Settings", "orbtronics-payment-gateway")}
           initialOpen={true}
         >
           <SelectControl
-            label={__("Payment Button", "opay-payment-gateway")}
+            label={__("Payment Button", "orbtronics-payment-gateway")}
             value={buttonId}
             options={buttonOptions}
             onChange={(value) => setAttributes({ buttonId: value })}
             help={__(
               "Choose an existing Opay payment button.",
-              "opay-payment-gateway",
+              "orbtronics-payment-gateway",
             )}
           />
           <TextControl
-            label={__("Button Label", "opay-payment-gateway")}
+            label={__("Button Label", "orbtronics-payment-gateway")}
             value={label}
             onChange={(value) => setAttributes({ label: value })}
           />
@@ -59,10 +59,10 @@ export default function Edit({ attributes, setAttributes }) {
         {!buttonId ? (
           <Placeholder
             icon="money-alt"
-            label={__("Opay Payment Button", "opay-payment-gateway")}
+            label={__("Opay Payment Button", "orbtronics-payment-gateway")}
             instructions={__(
               "Select a payment button from the Inspector panel on the right.",
-              "opay-payment-gateway",
+              "orbtronics-payment-gateway",
             )}
           />
         ) : (
@@ -72,7 +72,7 @@ export default function Edit({ attributes, setAttributes }) {
               className="opay-pay-btn opay-pay-btn--preview"
               disabled
             >
-              {label || __("Pay Now", "opay-payment-gateway")}
+              {label || __("Pay Now", "orbtronics-payment-gateway")}
               {selectedButton && (
                 <span className="opay-amount">
                   &nbsp;({selectedButton.label.split("—")[1]?.trim()})
@@ -80,10 +80,10 @@ export default function Edit({ attributes, setAttributes }) {
               )}
             </button>
             <p className="opay-block-meta">
-              {__("Mode:", "opay-payment-gateway")}{" "}
+              {__("Mode:", "orbtronics-payment-gateway")}{" "}
               <strong>{environment}</strong>
               &nbsp;|&nbsp;
-              {__("ID:", "opay-payment-gateway")} <code>{buttonId}</code>
+              {__("ID:", "orbtronics-payment-gateway")} <code>{buttonId}</code>
             </p>
           </div>
         )}

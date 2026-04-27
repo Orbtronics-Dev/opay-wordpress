@@ -4,7 +4,7 @@ Tags: payment, woocommerce, opay, checkout, payment gateway
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 0.1.2
+Stable tag: 0.1.3
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,7 +32,7 @@ No data is sent to the Opay backend until a customer initiates a checkout or a p
 
 == Installation ==
 
-1. Upload the plugin files to `/wp-content/plugins/opay-payment-gateway/`, or install via the WordPress plugin screen.
+1. Upload the plugin files to `/wp-content/plugins/orbtronics-payment-gateway/`, or install via the WordPress plugin screen.
 2. Activate the plugin through the **Plugins** screen in WordPress.
 3. Go to **Opay Payments → Settings → General** and enter your Backend URL and select your environment (Test or Live).
 4. Go to **Opay Payments → Settings → API Keys** and enter your Publishable and Secret keys.

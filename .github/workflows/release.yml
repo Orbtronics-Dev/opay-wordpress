@@ -28,7 +28,7 @@ jobs:
 
       - name: Build plugin ZIP
         run: |
-          PLUGIN_SLUG="opay-payment-gateway"
+          PLUGIN_SLUG="orbtronics-payment-gateway"
           VERSION="${{ steps.version.outputs.VERSION }}"
           ZIP_NAME="${PLUGIN_SLUG}-${VERSION}.zip"
 
