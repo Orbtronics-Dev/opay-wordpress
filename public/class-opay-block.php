@@ -39,7 +39,7 @@ class Opay_Block
     public function render( array $attributes ): string
     {
         $button_id = sanitize_text_field( $attributes['buttonId'] ?? '' );
-        $label     = sanitize_text_field( $attributes['label'] ?? __( 'Pay Now', 'opay-payment-gateway' ) );
+        $label     = sanitize_text_field( $attributes['label'] ?? __( 'Pay Now', 'orbtronics-payment-gateway' ) );
 
         if ( ! $button_id ) {
             return '';

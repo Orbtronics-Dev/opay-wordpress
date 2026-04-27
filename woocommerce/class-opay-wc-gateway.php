@@ -14,8 +14,8 @@ class Opay_WC_Gateway extends WC_Payment_Gateway
     {
         $this->id                 = 'opay';
         $this->icon               = apply_filters( 'opay_gateway_icon', OPAY_PLUGIN_URL . 'assets/orbtronics.svg' );
-        $this->method_title       = __( 'Opay', 'opay-payment-gateway' );
-        $this->method_description = __( 'Accept payments via Opay. Customers are redirected to a secure hosted checkout page.', 'opay-payment-gateway' );
+        $this->method_title       = __( 'Opay', 'orbtronics-payment-gateway' );
+        $this->method_description = __( 'Accept payments via Opay. Customers are redirected to a secure hosted checkout page.', 'orbtronics-payment-gateway' );
         $this->has_fields         = false;
         $this->supports           = [ 'products' ];
 
@@ -52,8 +52,8 @@ class Opay_WC_Gateway extends WC_Payment_Gateway
                 <?php
                 printf(
                     /* translators: %s: link to Opay settings page */
-                    esc_html__( 'API credentials are managed on the %s — configure your backend URL and API keys there first, then enable this gateway below.', 'opay-payment-gateway' ),
-                    '<a href="' . esc_url( $settings_url ) . '"><strong>' . esc_html__( 'Opay Payments settings page', 'opay-payment-gateway' ) . '</strong></a>'
+                    esc_html__( 'API credentials are managed on the %s — configure your backend URL and API keys there first, then enable this gateway below.', 'orbtronics-payment-gateway' ),
+                    '<a href="' . esc_url( $settings_url ) . '"><strong>' . esc_html__( 'Opay Payments settings page', 'orbtronics-payment-gateway' ) . '</strong></a>'
                 );
         ?>
             </p>
@@ -61,11 +61,11 @@ class Opay_WC_Gateway extends WC_Payment_Gateway
 
         <?php if ( ! $backend_url ) { ?>
         <div class="notice notice-error inline" style="margin:0 0 16px;">
-            <p><?php esc_html_e( 'Backend URL is not set. Go to Opay Payments → Settings → General to add it.', 'opay-payment-gateway' ); ?></p>
+            <p><?php esc_html_e( 'Backend URL is not set. Go to Opay Payments → Settings → General to add it.', 'orbtronics-payment-gateway' ); ?></p>
         </div>
         <?php } elseif ( ! $has_keys ) { ?>
         <div class="notice notice-warning inline" style="margin:0 0 16px;">
-            <p><?php esc_html_e( 'No API keys configured. Payments cannot be processed until credentials are set.', 'opay-payment-gateway' ); ?></p>
+            <p><?php esc_html_e( 'No API keys configured. Payments cannot be processed until credentials are set.', 'orbtronics-payment-gateway' ); ?></p>
         </div>
         <?php } else { ?>
         <div class="notice notice-success inline" style="margin:0 0 16px;">
@@ -73,7 +73,7 @@ class Opay_WC_Gateway extends WC_Payment_Gateway
                 <?php
         printf(
             /* translators: %s: environment label (Test / Live) */
-            esc_html__( 'Connected — %s mode.', 'opay-payment-gateway' ),
+            esc_html__( 'Connected — %s mode.', 'orbtronics-payment-gateway' ),
             '<strong>' . esc_html( ucfirst( Opay_Auth::get_environment() ) ) . '</strong>'
         );
             ?>
@@ -95,23 +95,23 @@ class Opay_WC_Gateway extends WC_Payment_Gateway
     {
         $this->form_fields = [
             'enabled'     => [
-                'title'   => __( 'Enable / Disable', 'opay-payment-gateway' ),
+                'title'   => __( 'Enable / Disable', 'orbtronics-payment-gateway' ),
                 'type'    => 'checkbox',
-                'label'   => __( 'Enable Opay payment gateway', 'opay-payment-gateway' ),
+                'label'   => __( 'Enable Opay payment gateway', 'orbtronics-payment-gateway' ),
                 'default' => 'no',
             ],
             'title'       => [
-                'title'       => __( 'Title', 'opay-payment-gateway' ),
+                'title'       => __( 'Title', 'orbtronics-payment-gateway' ),
                 'type'        => 'text',
-                'description' => __( 'Shown to customers on the checkout page.', 'opay-payment-gateway' ),
-                'default'     => __( 'Pay with Opay', 'opay-payment-gateway' ),
+                'description' => __( 'Shown to customers on the checkout page.', 'orbtronics-payment-gateway' ),
+                'default'     => __( 'Pay with Opay', 'orbtronics-payment-gateway' ),
                 'desc_tip'    => true,
             ],
             'description' => [
-                'title'       => __( 'Description', 'opay-payment-gateway' ),
+                'title'       => __( 'Description', 'orbtronics-payment-gateway' ),
                 'type'        => 'textarea',
-                'description' => __( 'Shown below the payment title at checkout.', 'opay-payment-gateway' ),
-                'default'     => __( 'Secure payment powered by Opay.', 'opay-payment-gateway' ),
+                'description' => __( 'Shown below the payment title at checkout.', 'orbtronics-payment-gateway' ),
+                'default'     => __( 'Secure payment powered by Opay.', 'orbtronics-payment-gateway' ),
             ],
         ];
     }
@@ -125,7 +125,7 @@ class Opay_WC_Gateway extends WC_Payment_Gateway
         $order = wc_get_order( $order_id );
 
         if ( ! $order ) {
-            wc_add_notice( __( 'Order not found.', 'opay-payment-gateway' ), 'error' );
+            wc_add_notice( __( 'Order not found.', 'orbtronics-payment-gateway' ), 'error' );
 
             return [ 'result' => 'failure' ];
         }
@@ -135,7 +135,7 @@ class Opay_WC_Gateway extends WC_Payment_Gateway
 
         if ( ! $sk ) {
             wc_add_notice(
-                __( 'Payment configuration error. Please contact the site administrator.', 'opay-payment-gateway' ),
+                __( 'Payment configuration error. Please contact the site administrator.', 'orbtronics-payment-gateway' ),
                 'error'
             );
 
@@ -166,7 +166,7 @@ class Opay_WC_Gateway extends WC_Payment_Gateway
             wc_add_notice(
                 sprintf(
                     /* translators: %s: error message */
-                    __( 'Payment error: %s', 'opay-payment-gateway' ),
+                    __( 'Payment error: %s', 'orbtronics-payment-gateway' ),
                     esc_html( $result['error'] )
                 ),
                 'error'
@@ -179,18 +179,18 @@ class Opay_WC_Gateway extends WC_Payment_Gateway
         $transaction_id = $result['data']['id'] ?? '';
 
         if ( ! $checkout_url ) {
-            wc_add_notice( __( 'Payment gateway did not return a checkout URL.', 'opay-payment-gateway' ), 'error' );
+            wc_add_notice( __( 'Payment gateway did not return a checkout URL.', 'orbtronics-payment-gateway' ), 'error' );
 
             return [ 'result' => 'failure' ];
         }
 
         // Mark order as pending payment and store transaction ID
-        $order->update_status( 'pending', __( 'Awaiting Opay payment.', 'opay-payment-gateway' ) );
+        $order->update_status( 'pending', __( 'Awaiting Opay payment.', 'orbtronics-payment-gateway' ) );
         $order->update_meta_data( '_opay_transaction_id', $transaction_id );
         $order->add_order_note(
             sprintf(
                 /* translators: %s: Opay transaction ID */
-                __( 'Opay payment initiated. Transaction ID: %s', 'opay-payment-gateway' ),
+                __( 'Opay payment initiated. Transaction ID: %s', 'orbtronics-payment-gateway' ),
                 esc_html( $transaction_id )
             )
         );

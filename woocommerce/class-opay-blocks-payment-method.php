@@ -46,8 +46,8 @@ class Opay_Blocks_Payment_Method extends AbstractPaymentMethodType
     public function get_payment_method_data(): array
     {
         return [
-            'title'       => $this->get_setting( 'title', __( 'Pay with Opay', 'opay-payment-gateway' ) ),
-            'description' => $this->get_setting( 'description', __( 'Secure payment powered by Opay.', 'opay-payment-gateway' ) ),
+            'title'       => $this->get_setting( 'title', __( 'Pay with Opay', 'orbtronics-payment-gateway' ) ),
+            'description' => $this->get_setting( 'description', __( 'Secure payment powered by Opay.', 'orbtronics-payment-gateway' ) ),
             'icon'        => OPAY_PLUGIN_URL . 'assets/orbtronics.svg',
             // Hardcode the supported features — get_supported_features() relies on
             // WC payment gateways being fully initialised which is not guaranteed

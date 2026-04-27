@@ -138,7 +138,7 @@ class Opay_Webhook_Handler
             $order->add_order_note(
                 sprintf(
                     /* translators: %s: Opay transaction ID */
-                    __( 'Opay webhook: payment succeeded. Transaction ID: %s', 'opay-payment-gateway' ),
+                    __( 'Opay webhook: payment succeeded. Transaction ID: %s', 'orbtronics-payment-gateway' ),
                     esc_html( $transaction_id )
                 )
             );
@@ -167,7 +167,7 @@ class Opay_Webhook_Handler
 
         if ( ! in_array( $order->get_status(), [ 'failed', 'cancelled' ], true ) ) {
             $order->update_status( 'failed' );
-            $order->add_order_note( __( 'Opay webhook: payment failed.', 'opay-payment-gateway' ) );
+            $order->add_order_note( __( 'Opay webhook: payment failed.', 'orbtronics-payment-gateway' ) );
         }
     }
 
