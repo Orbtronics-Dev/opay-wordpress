@@ -1,5 +1,5 @@
 export:
-	zip -r opay-payment-gateway.zip . \
+	zip -r orbtronics-payment-gateway.zip . \
 		--exclude='.git/*' \
 		--exclude='.github/*' \
 		--exclude='.claude/*' \

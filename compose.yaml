@@ -15,7 +15,7 @@ services:
       # file change on the host is instantly live — no re-upload needed.
       # Adjust the right-hand path if WordPress installed the plugin under
       # a different folder name (check wp-content/plugins/ inside the container).
-      - .:/var/www/html/wp-content/plugins/opay-payment-gateway
+      - .:/var/www/html/wp-content/plugins/orbtronics-payment-gateway
 
   database:
     image: mysql:8.0

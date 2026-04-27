@@ -74,8 +74,8 @@ Navigate to **Opay Payments → Settings → General**.
 ## Plugin Structure
 
 ```
-opay-payment-gateway/
-├── opay-payment-gateway.php     # Plugin bootstrap, hooks, activation
+orbtronics-payment-gateway/
+├── orbtronics-payment-gateway.php     # Plugin bootstrap, hooks, activation
 ├── uninstall.php                # Cleanup on deletion
 │
 ├── includes/
@@ -187,7 +187,7 @@ git tag v1.0.0
 git push origin v1.0.0
 ```
 
-The resulting ZIP is named `opay-payment-gateway-{version}.zip` and excludes `.git`, `.github`, `.claude`, `compose.yaml`, and `README.md`. It is ready to upload directly to **Plugins → Add New → Upload Plugin** or to the WordPress.org SVN repository.
+The resulting ZIP is named `orbtronics-payment-gateway-{version}.zip` and excludes `.git`, `.github`, `.claude`, `compose.yaml`, and `README.md`. It is ready to upload directly to **Plugins → Add New → Upload Plugin** or to the WordPress.org SVN repository.
 
 To build a ZIP locally:
 
