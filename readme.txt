@@ -1,5 +1,5 @@
-=== Opay Payment Gateway ===
-Contributors: orbtronics
+=== Orbtronics Payment Gateway ===
+Contributors: orbtronicsknowspeter
 Tags: payment, woocommerce, opay, checkout, payment gateway
 Requires at least: 6.0
 Tested up to: 6.9
@@ -12,7 +12,7 @@ Accept payments via Opay. Integrates Opay payment infrastructure with WooCommerc
 
 == Description ==
 
-Opay Payment Gateway integrates the Opay payment platform with WordPress and WooCommerce.
+Orbtronics Payment Gateway integrates the Opay payment platform with WordPress and WooCommerce.
 
 **Features:**
 

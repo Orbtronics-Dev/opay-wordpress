@@ -63,7 +63,7 @@ class Opay_Shortcodes
         $atts = shortcode_atts(
             [
                 'id'    => '',
-                'label' => __( 'Pay Now', 'opay-payment-gateway' ),
+                'label' => __( 'Pay Now', 'orbtronics-payment-gateway' ),
             ],
             $atts,
             'opay_button'
@@ -117,13 +117,13 @@ class Opay_Shortcodes
             <div class="opay-customer-form" style="display:none;">
                 <input type="email"
                        class="opay-customer-email"
-                       placeholder="<?php esc_attr_e( 'Your email', 'opay-payment-gateway' ); ?>"
+                       placeholder="<?php esc_attr_e( 'Your email', 'orbtronics-payment-gateway' ); ?>"
                        required />
                 <input type="text"
                        class="opay-customer-name"
-                       placeholder="<?php esc_attr_e( 'Your name', 'opay-payment-gateway' ); ?>" />
+                       placeholder="<?php esc_attr_e( 'Your name', 'orbtronics-payment-gateway' ); ?>" />
                 <button type="button" class="opay-checkout-btn">
-                    <?php esc_html_e( 'Continue to Payment', 'opay-payment-gateway' ); ?>
+                    <?php esc_html_e( 'Continue to Payment', 'orbtronics-payment-gateway' ); ?>
                 </button>
             </div>
 

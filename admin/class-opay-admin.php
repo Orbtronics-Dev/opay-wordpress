@@ -43,8 +43,8 @@ class Opay_Admin
             : 'dashicons-money-alt';
 
         add_menu_page(
-            __( 'Opay Payments', 'opay-payment-gateway' ),
-            __( 'Opay Payments', 'opay-payment-gateway' ),
+            __( 'Opay Payments', 'orbtronics-payment-gateway' ),
+            __( 'Opay Payments', 'orbtronics-payment-gateway' ),
             'manage_options',
             'opay-settings',
             [ $this, 'render_settings_page' ],
@@ -54,8 +54,8 @@ class Opay_Admin
 
         add_submenu_page(
             'opay-settings',
-            __( 'Settings', 'opay-payment-gateway' ),
-            __( 'Settings', 'opay-payment-gateway' ),
+            __( 'Settings', 'orbtronics-payment-gateway' ),
+            __( 'Settings', 'orbtronics-payment-gateway' ),
             'manage_options',
             'opay-settings',
             [ $this, 'render_settings_page' ]
