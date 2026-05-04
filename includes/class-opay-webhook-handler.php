@@ -34,18 +34,20 @@ class Opay_Webhook_Handler
     {
         $body = $request->get_body();
 
-        // Validate HMAC-SHA256 signature when a webhook secret is configured.
+        // Always validate HMAC-SHA256 signature — a webhook secret must be configured.
         $secret = Opay_Auth::get_webhook_secret();
 
-        if ( $secret ) {
-            $signature = (string) $request->get_header( 'x-opay-signature' );
-            $expected  = hash_hmac( 'sha256', $body, $secret );
+        if ( ! $secret ) {
+            return new WP_REST_Response( [ 'error' => 'Webhook secret not configured' ], 401 );
+        }
 
-            if ( ! hash_equals( $expected, $signature ) ) {
-                self::log_invalid_signature( $signature );
+        $signature = (string) $request->get_header( 'x-opay-signature' );
+        $expected  = hash_hmac( 'sha256', $body, $secret );
 
-                return new WP_REST_Response( [ 'error' => 'Invalid signature' ], 401 );
-            }
+        if ( ! hash_equals( $expected, $signature ) ) {
+            self::log_invalid_signature( $signature );
+
+            return new WP_REST_Response( [ 'error' => 'Invalid signature' ], 401 );
         }
 
         $payload = json_decode( $body, true );
