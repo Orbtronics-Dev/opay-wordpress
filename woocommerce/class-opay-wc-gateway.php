@@ -111,7 +111,7 @@ class Opay_WC_Gateway extends WC_Payment_Gateway
                 'title'       => __( 'Description', 'orbtronics-payment-gateway' ),
                 'type'        => 'textarea',
                 'description' => __( 'Shown below the payment title at checkout.', 'orbtronics-payment-gateway' ),
-                'default'     => __( 'Secure payment powered by Opay.', 'orbtronics-payment-gateway' ),
+                'default'     => __( 'Pay securely using your card.', 'orbtronics-payment-gateway' ),
             ],
         ];
     }
