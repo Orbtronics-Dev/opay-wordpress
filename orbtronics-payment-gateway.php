@@ -4,7 +4,7 @@
  * Plugin Name: Orbtronics Payment Gateway
  * Plugin URI:  https://orbtronics.co/opay
  * Description: Integrates Opay payment infrastructure with WordPress and WooCommerce. Supports payment buttons, shortcodes, Gutenberg blocks, and a full WooCommerce checkout gateway.
- * Version:     0.1.3
+ * Version:     0.1.4
  * Author:      Orbtronics
  * Author URI:  https://orbtronics.co
  * License:     GPL-2.0-or-later
@@ -19,7 +19,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // Plugin constants
-define( 'OPAY_VERSION', '0.1.3' );
+define( 'OPAY_VERSION', '0.1.4' );
 define( 'OPAY_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'OPAY_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
