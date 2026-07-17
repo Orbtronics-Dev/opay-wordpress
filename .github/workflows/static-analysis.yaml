@@ -19,7 +19,7 @@ jobs:
         uses: cachix/install-nix-action@v31
 
       - name: lint
-        run: just lint
+        run: nix develop --impure -c just lint
 
       - name: format
-        run: just format
+        run: nix develop --impure -c just format
