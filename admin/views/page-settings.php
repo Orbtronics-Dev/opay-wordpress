@@ -68,26 +68,14 @@ $backend_url     = Opay_Auth::get_backend_url(); // phpcs:ignore WordPress.Namin
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row">
-                        <label for="opay-webhook-secret"><?php esc_html_e( 'Webhook Secret', 'orbtronics-payment-gateway' ); ?></label>
-                    </th>
-                    <td>
-                        <input type="password" id="opay-webhook-secret" name="webhook_secret"
-                               class="regular-text"
-                               value="<?php echo esc_attr( Opay_Auth::get_webhook_secret() ? str_repeat( '•', 24 ) : '' ); ?>"
-                               autocomplete="new-password"
-                               placeholder="<?php esc_attr_e( 'Leave blank to skip signature validation', 'orbtronics-payment-gateway' ); ?>" />
-                        <p class="description">
-                            <?php esc_html_e( 'Used to verify the X-Opay-Signature header on incoming webhooks. Must match the secret configured on the backend.', 'orbtronics-payment-gateway' ); ?>
-                        </p>
-                    </td>
-                </tr>
-                <tr>
                     <th scope="row"></th>
                     <td>
                         <p class="description opay-webhook-url">
                             <?php esc_html_e( 'Webhook URL:', 'orbtronics-payment-gateway' ); ?>
                             <code><?php echo esc_url( rest_url( 'opay/v1/webhook' ) ); ?></code>
+                        </p>
+                        <p class="description">
+                            <?php esc_html_e( 'Register this URL in your Opay dashboard. Incoming payment notifications are verified against the Opay backend using your secret API key before any order is updated.', 'orbtronics-payment-gateway' ); ?>
                         </p>
                     </td>
                 </tr>

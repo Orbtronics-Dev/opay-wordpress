@@ -127,17 +127,19 @@ The endpoint accepts `POST /wp-json/opay/v1/webhook` and dispatches the followin
 | `customer.subscription.updated` / `subscription.updated` | `opay_subscription_updated` |
 | Any other event                                          | `opay_webhook_received`     |
 
-WooCommerce orders are automatically moved to `processing` on a succeeded event and `failed` on a failed event, matched via `metadata.order_id` in the payload.
+Webhooks are treated as untrusted notifications: on payment events the plugin re-fetches the transaction from the Opay backend (`GET /api/v1/payments/{id}`, authenticated with your secret API key) and only acts on the verified status. `opay_payment_succeeded` / `opay_payment_failed` fire only after this verification, and receive the verified transaction as a second argument.
+
+WooCommerce orders are automatically moved to `processing` on a verified succeeded transaction and `failed` on a verified failed transaction, matched via `metadata.order_id` on the transaction.
 
 All incoming webhook events are logged to the `{prefix}_opay_webhook_log` database table.
 
 **Listening to webhook events from your own code:**
 
 ```php
-add_action( 'opay_payment_succeeded', function ( array $payload ) {
-    $order_id = $payload['data']['metadata']['order_id'] ?? null;
+add_action( 'opay_payment_succeeded', function ( array $payload, array $transaction ) {
+    $order_id = $transaction['metadata']['order_id'] ?? null;
     // your logic here
-} );
+}, 10, 2 );
 ```
 
 ---

@@ -205,13 +205,6 @@ class Opay_Admin
         }
         Opay_Auth::set_environment( $environment );
 
-        // Only update webhook secret when explicitly submitted (key present in POST)
-        if ( array_key_exists( 'webhook_secret', $_POST ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-            Opay_Auth::set_webhook_secret(
-                sanitize_text_field( wp_unslash( $_POST['webhook_secret'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
-            );
-        }
-
         wp_send_json_success( [ 'message' => 'Settings saved.' ] );
     }
 
