@@ -4,7 +4,7 @@ Tags: payment, woocommerce, opay, checkout, payment gateway
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 0.1.3
+Stable tag: 0.1.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -62,10 +62,17 @@ Yes. The plugin registers a payment method for the WooCommerce Checkout Block as
 
 == Changelog ==
 
+= 0.1.4 =
+* Fixed: incoming webhooks were always rejected with a 401 signature error. Payment webhooks are now verified against the Opay backend API before any order is updated.
+* Removed the Webhook Secret setting — it is no longer needed.
+
 = 1.0.0 =
 * Initial release.
 
 == Upgrade Notice ==
+
+= 0.1.4 =
+Fixes webhooks always failing with a 401 error. Update required for payment status updates to reach WooCommerce orders.
 
 = 1.0.0 =
 Initial release.

@@ -22,33 +22,22 @@ class Opay_Webhook_Handler
             [
                 'methods'             => WP_REST_Server::CREATABLE,
                 'callback'            => [ __CLASS__, 'handle' ],
-                'permission_callback' => '__return_true', // Auth via payload signature
+                'permission_callback' => '__return_true', // Public ping endpoint — payment events are verified via authenticated backend API call before acting
             ]
         );
     }
 
     /**
      * Handle an incoming webhook POST.
+     *
+     * Webhooks are unauthenticated notifications ("pings") — the payload is
+     * never trusted directly. Before any WooCommerce order is touched, the
+     * transaction is re-fetched from the Opay backend over an authenticated
+     * API call and only that verified state is acted upon.
      */
     public static function handle( WP_REST_Request $request ): WP_REST_Response
     {
         $body = $request->get_body();
-
-        // Always validate HMAC-SHA256 signature — a webhook secret must be configured.
-        $secret = Opay_Auth::get_webhook_secret();
-
-        if ( ! $secret ) {
-            return new WP_REST_Response( [ 'error' => 'Webhook secret not configured' ], 401 );
-        }
-
-        $signature = (string) $request->get_header( 'x-opay-signature' );
-        $expected  = hash_hmac( 'sha256', $body, $secret );
-
-        if ( ! hash_equals( $expected, $signature ) ) {
-            self::log_invalid_signature( $signature );
-
-            return new WP_REST_Response( [ 'error' => 'Invalid signature' ], 401 );
-        }
 
         $payload = json_decode( $body, true );
 
@@ -83,14 +72,9 @@ class Opay_Webhook_Handler
         switch ( $event_type ) {
             case 'payment.succeeded':
             case 'payment_intent.succeeded':
-                do_action( 'opay_payment_succeeded', $payload );
-                self::maybe_complete_wc_order( $payload );
-                break;
-
             case 'payment.failed':
             case 'payment_intent.payment_failed':
-                do_action( 'opay_payment_failed', $payload );
-                self::maybe_fail_wc_order( $payload );
+                self::handle_payment_event( $payload );
                 break;
 
             case 'charge.refunded':
@@ -109,21 +93,63 @@ class Opay_Webhook_Handler
     }
 
     // -------------------------------------------------------------------------
-    // WooCommerce order integration
+    // Payment events — verified against the backend before acting
     // -------------------------------------------------------------------------
 
-    private static function maybe_complete_wc_order( array $payload ): void
+    /**
+     * The webhook endpoint is public, so a payment payload could be forged.
+     * Re-fetch the transaction via GET /api/v1/payments/{id} (Bearer secret
+     * key, scoped to this merchant) and act only on the verified status.
+     */
+    private static function handle_payment_event( array $payload ): void
+    {
+        $transaction_id = $payload['data']['transaction_id']
+                       ?? $payload['transaction_id']
+                       ?? '';
+
+        if ( ! $transaction_id ) {
+            self::log( 'warning', 'Payment webhook without transaction_id — ignored.' );
+
+            return;
+        }
+
+        $result = Opay_API::get_payment_status( (string) $transaction_id );
+
+        if ( $result['error'] || ! is_array( $result['data'] ) ) {
+            self::log(
+                'warning',
+                "Payment webhook: could not verify transaction {$transaction_id} against backend — ignored. " . ( $result['error'] ?? '' )
+            );
+
+            return;
+        }
+
+        $transaction = $result['data'];
+        $status      = (string) ( $transaction['status'] ?? '' );
+
+        if ( 'succeeded' === $status ) {
+            do_action( 'opay_payment_succeeded', $payload, $transaction );
+            self::maybe_complete_wc_order( $transaction );
+        } elseif ( 'failed' === $status ) {
+            do_action( 'opay_payment_failed', $payload, $transaction );
+            self::maybe_fail_wc_order( $transaction );
+        } else {
+            self::log( 'info', "Payment webhook for transaction {$transaction_id}: verified status is '{$status}' — no order change." );
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // WooCommerce order integration (receives backend-verified transactions)
+    // -------------------------------------------------------------------------
+
+    private static function maybe_complete_wc_order( array $transaction ): void
     {
         if ( ! function_exists( 'wc_get_order' ) ) {
             return;
         }
 
-        $order_id      = $payload['data']['metadata']['order_id']
-                      ?? $payload['metadata']['order_id']
-                      ?? null;
-        $transaction_id = $payload['data']['id']
-                       ?? $payload['transaction_id']
-                       ?? '';
+        $order_id       = $transaction['metadata']['order_id'] ?? null;
+        $transaction_id = $transaction['id'] ?? '';
 
         if ( ! $order_id ) {
             return;
@@ -147,15 +173,13 @@ class Opay_Webhook_Handler
         }
     }
 
-    private static function maybe_fail_wc_order( array $payload ): void
+    private static function maybe_fail_wc_order( array $transaction ): void
     {
         if ( ! function_exists( 'wc_get_order' ) ) {
             return;
         }
 
-        $order_id = $payload['data']['metadata']['order_id']
-                 ?? $payload['metadata']['order_id']
-                 ?? null;
+        $order_id = $transaction['metadata']['order_id'] ?? null;
 
         if ( ! $order_id ) {
             return;
@@ -194,12 +218,10 @@ class Opay_Webhook_Handler
         );
     }
 
-    private static function log_invalid_signature( string $received ): void
+    private static function log( string $level, string $message ): void
     {
-        $preview = $received ? ( substr( $received, 0, 8 ) . '…' ) : '(none)';
-        wc_get_logger()->warning(
-            "Webhook rejected — invalid X-Opay-Signature: {$preview}",
-            [ 'source' => 'opay-webhook' ]
-        );
+        if ( function_exists( 'wc_get_logger' ) ) {
+            wc_get_logger()->log( $level, $message, [ 'source' => 'opay-webhook' ] );
+        }
     }
 }
